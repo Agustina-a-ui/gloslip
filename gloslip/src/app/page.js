@@ -45,7 +45,7 @@ export default function Home() {
       const progress = Math.min(scrollY / window.innerHeight, 1);
       const openProgress = Math.max(
         0,
-        Math.min((scrollY - window.innerHeight * 0.08) / (window.innerHeight * 0.35), 1)
+        Math.min((scrollY - window.innerHeight * 0.005) / (window.innerHeight * 0.18), 1)
       );
       setScrollVal(progress);
       setOpenVal(openProgress);
@@ -57,10 +57,11 @@ export default function Home() {
 
   const translateY = scrollVal * -32;
   const rotateZ   = scrollVal * 9;
-  const bulletTY  = openVal * -22;
-  const capRotate = openVal * -62;
-  const capTX     = openVal * 70;
-  const capTY     = openVal * -45;
+  const capMotion = openVal;
+  const bulletTY  = capMotion * -22;
+  const capRotate = capMotion * -62;
+  const capTX     = capMotion * 70;
+  const capTY     = capMotion * -45;
 
   return (
     <>
