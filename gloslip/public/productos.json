@@ -1,0 +1,5 @@
+[
+  { "id": 1, "nombre": "Velvet Mate Cherry", "tipo": "labial", "precio": 15000, "imagen": "URL_DE_LA_IMAGEN_AQUI" },
+  { "id": 2, "nombre": "Gloss Crystal Clear", "tipo": "gloss", "precio": 12000, "imagen": "URL_DE_LA_IMAGEN_AQUI" },
+  { "id": 3, "nombre": "Nude Chic Mate", "tipo": "labial", "precio": 14000, "imagen": "URL_DE_LA_IMAGEN_AQUI" }
+]
