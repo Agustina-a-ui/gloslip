@@ -1,6 +1,5 @@
-/* src/app/globals.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap');
 
-/* 1. Reset básico y Tipografías Seguras (Fallback) */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,73 +7,214 @@
 }
 
 body {
-  /* Fuente segura con fallback elegante */
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-  background-color: #faf9f8; /* Tono crema muy sutil y minimalista */
-  color: #333;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(180deg, #fff7f0 0%, #fff8f3 38%, #fff 100%);
+  color: #2f2f2f;
+  min-height: 100vh;
 }
 
-/* 2. Estructura Principal */
-header {
-  text-align: center;
-  padding: 4rem 1rem;
-  background-color: #fff;
-  border-bottom: 1px solid #eaeaea;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-header h1 {
-  font-size: 2.5rem;
-  font-weight: 300;
-  letter-spacing: 2px;
+img {
+  display: block;
+  max-width: 100%;
+}
+
+header.site-header {
+  position: relative;
+  padding: 2rem 1rem 4rem;
+  overflow: hidden;
+}
+
+header.site-header::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  left: -110px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle at top left, rgba(220, 173, 164, 0.38), transparent 65%);
+  pointer-events: none;
+}
+
+header.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: -70px;
+  right: -90px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle at bottom right, rgba(199, 156, 146, 0.22), transparent 60%);
+  pointer-events: none;
+}
+
+.nav-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.85rem;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-}
-
-header p {
-  color: #888;
-  margin-top: 0.5rem;
+  color: #2b2b2b;
 }
 
 nav {
-  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
 }
 
 nav a {
-  margin-right: 1rem;
-  color: #333;
-  text-decoration: none;
+  color: #4a3c37;
+  font-size: 0.95rem;
   font-weight: 500;
-  transition: color 0.3s ease;
+  transition: color 0.25s ease;
 }
 
 nav a:hover {
-  color: #888;
+  color: #9f7466;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  max-width: 1100px;
+  margin: 3rem auto 0;
+  padding: 0 1rem;
+}
+
+.hero-copy {
+  max-width: 560px;
+  z-index: 1;
+  animation: fadeInUp 0.9s ease both;
+}
+
+.eyebrow {
+  display: inline-flex;
+  margin-bottom: 1rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #ba8b7a;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.hero-copy h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.4rem;
+  line-height: 1.04;
+  margin-bottom: 1.2rem;
+  color: #312523;
+}
+
+.hero-copy p {
+  max-width: 520px;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #5a4c47;
+  margin-bottom: 1.8rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border-radius: 999px;
+  padding: 0 1.6rem;
+  font-weight: 600;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.btn-primary {
+  background: #b46c5d;
+  color: #fff;
+  box-shadow: 0 18px 40px rgba(180, 108, 93, 0.18);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.95);
+  color: #5a463f;
+  border: 1px solid rgba(90, 70, 63, 0.16);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-image {
+  width: 100%;
+  max-width: 520px;
+  border-radius: 36px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(37, 24, 21, 0.14);
+  animation: float 6s ease-in-out infinite;
 }
 
 main {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 3rem 1rem;
+  padding: 3rem 1rem 4rem;
 }
 
-/* 3. Responsive Design (Grid) */
+.section-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 2.5rem;
+}
+
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  margin: 1rem 0 0.8rem;
+  color: #2c2321;
+}
+
+.section-header p {
+  color: #6d5e5a;
+  line-height: 1.8;
+}
+
 .catalogo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 2rem;
-  margin-top: 2rem;
 }
 
-/* 4. Tarjetas de Producto y Animaciones */
 .producto-card {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 28px;
+  padding: 1.8rem;
   text-align: center;
-  border: 1px solid #eaeaea;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animación chic */
-  cursor: pointer;
+  box-shadow: 0 25px 60px rgba(28, 18, 16, 0.08);
+  border: 1px solid rgba(179, 135, 122, 0.15);
   opacity: 0;
-  transform: translateY(50px) scale(0.9);
+  transform: translateY(40px) scale(0.98);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
@@ -83,39 +223,110 @@ main {
   transform: translateY(0) scale(1);
 }
 
-.producto-card:hover {
-  transform: translateY(-5px) scale(1.05); /* Se eleva un poquito al pasar el mouse */
-  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+.producto-media {
+  border-radius: 22px;
+  overflow: hidden;
+  margin-bottom: 1.4rem;
 }
 
-.producto-card img {
-  transition: transform 0.3s ease;
+.producto-media img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  transition: transform 0.35s ease;
 }
 
-.producto-card:hover img {
-  transform: scale(1.1); /* Efecto de "abrirse" al hover */
-}
-
-.producto-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+.producto-card:hover .producto-media img {
+  transform: scale(1.05);
 }
 
 .tag {
-  display: inline-block;
-  font-size: 0.8rem;
+  display: inline-flex;
+  background: #f2d8d2;
+  color: #7a564c;
+  font-size: 0.78rem;
+  font-weight: 700;
   text-transform: uppercase;
-  background: #eedddd;
-  padding: 0.2rem 0.6rem;
-  border-radius: 20px;
-  color: #555;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  letter-spacing: 0.08em;
   margin-bottom: 1rem;
+}
+
+.producto-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.55rem;
+  color: #382a28;
+}
+
+.precio {
+  font-size: 1rem;
+  color: #7c5d53;
+  font-weight: 600;
+}
+
+.loading-text {
+  text-align: center;
+  color: #7e6a63;
+  font-size: 1rem;
+  margin-top: 2rem;
 }
 
 footer {
   text-align: center;
-  padding: 2rem;
-  font-size: 0.9rem;
-  color: #999;
-  border-top: 1px solid #eaeaea;
+  padding: 2rem 1rem;
+  color: #8d7a73;
+  border-top: 1px solid rgba(170, 148, 138, 0.2);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .nav-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav {
+    gap: 0.9rem;
+  }
+
+  .hero {
+    gap: 1.5rem;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.2rem;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

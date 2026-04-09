@@ -4,16 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
 export default function Home() {
-  // 1. Manejo de Estado (state)
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
-
-  // Refs para animaciones
   const cardsRef = useRef([]);
 
-  // 2. Efecto Secundario (useEffect) y AsincronÃ­a (fetch)
   useEffect(() => {
-    // Simulamos que traemos los datos de una API externa
     const obtenerProductos = async () => {
       try {
         const respuesta = await fetch('/productos.json');
@@ -27,9 +22,8 @@ export default function Home() {
     };
 
     obtenerProductos();
-  }, []); // El array vacÃ­o [] significa que esto se ejecuta solo una vez al cargar la pÃ¡gina
+  }, []);
 
-  // Animaciones en scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -39,7 +33,7 @@ export default function Home() {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.12 }
     );
 
     cardsRef.current.forEach((card) => {
@@ -51,23 +45,45 @@ export default function Home() {
 
   return (
     <>
-      <header>
-        <h1>Gloslip</h1>
-        <p>Minimalismo chic para tus labios</p>
-        <nav style={{ marginTop: "1rem" }}>
-          <Link href="/" style={{ marginRight: "1rem", color: "#333", fontWeight: "bold" }}>Inicio</Link>
-          <Link href="/contacto" style={{ marginRight: "1rem", color: "#333" }}>Contacto</Link>
-          <Link href="#catalogo" style={{ color: "#333" }}>CatÃ¡logo</Link>
-        </nav>
+      <header className="site-header">
+        <div className="nav-wrap">
+          <div className="brand">Gloslip</div>
+          <nav>
+            <Link href="#inicio">Inicio</Link>
+            <Link href="#catalogo">Catálogo</Link>
+            <Link href="/contacto">Contacto</Link>
+          </nav>
+        </div>
+
+        <section className="hero" id="inicio">
+          <div className="hero-copy">
+            <p className="eyebrow">Brillo que enamora</p>
+            <h1>Labiales suaves y elegantes para tu estilo diario</h1>
+            <p>Descubrí tonos con acabado sedoso, presentación premium y una experiencia visual que enamora.</p>
+            <div className="hero-actions">
+              <Link href="#catalogo" className="btn btn-primary">Ver colección</Link>
+              <Link href="/contacto" className="btn btn-secondary">Contacto</Link>
+            </div>
+          </div>
+
+          <div className="hero-visual">
+            <div className="hero-image">
+              <img src="/labial-cherry..png" alt="Labial Gloslip" />
+            </div>
+          </div>
+        </section>
       </header>
 
       <main>
-        <section id="catalogo">
-          <h2>Nuestro CatÃ¡logo</h2>
-          
-          {/* 3. Renderizado de la lista */}
+        <section id="catalogo" className="catalogo-section">
+          <div className="section-header">
+            <span className="eyebrow">Colección</span>
+            <h2>Nuestros labiales favoritos</h2>
+            <p>Un catálogo curado con tonos versátiles y acabados confortables, pensado para destacar sin esfuerzo.</p>
+          </div>
+
           {cargando ? (
-            <p>Cargando la colecciÃ³n...</p>
+            <p className="loading-text">Cargando la colección...</p>
           ) : (
             <div className="catalogo-grid">
               {productos.map((prod, index) => (
@@ -76,10 +92,12 @@ export default function Home() {
                   className="producto-card"
                   ref={(el) => (cardsRef.current[index] = el)}
                 >
-                  <img src={prod.imagen} alt={prod.nombre} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px' }} />
+                  <div className="producto-media">
+                    <img src={prod.imagen} alt={prod.nombre} />
+                  </div>
                   <span className="tag">{prod.tipo}</span>
                   <h3>{prod.nombre}</h3>
-                  <p>${prod.precio}</p>
+                  <p className="precio">${prod.precio}</p>
                 </article>
               ))}
             </div>
@@ -88,7 +106,7 @@ export default function Home() {
       </main>
 
       <footer>
-        <p>Â© 2026 Gloslip - Parcial ProgramaciÃ³n Web</p>
+        <p>© 2026 Gloslip</p>
       </footer>
     </>
   );
