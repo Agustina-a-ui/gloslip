@@ -299,6 +299,12 @@ export default function Home() {
                     <span className="tag">{prod.tipo}</span>
                     <h3>{prod.nombre}</h3>
                     <p className="precio">${prod.precio}</p>
+                    <div className="producto-actions">
+                      <a
+                        href={`mailto:ventas@gloslip.com?subject=Compra%20${encodeURIComponent(prod.nombre)}`}
+                        className="btn btn-primary"
+                      >Comprar</a>
+                    </div>
                   </div>
                 </article>
               ))}

@@ -9,56 +9,59 @@ export default function Contacto() {
   const [enviado, setEnviado] = useState(false);
 
   const manejarEnvio = (e) => {
-    e.preventDefault(); // Evita que la página se recargue
+    e.preventDefault();
 
-    // Validación básica
     if (mensaje.trim() === "") {
       setError("Por favor, escribe un mensaje antes de enviar.");
       return;
     }
 
-    // Si pasa la validación
     setError("");
     setEnviado(true);
     setMensaje("");
   };
 
   return (
-    <>
-      <header>
-        <h1>Gloslip</h1>
-        <nav style={{ marginTop: "1rem" }}>
-          {/* Usamos Link de Next.js para navegar sin recargar la página */}
-          <Link href="/" style={{ marginRight: "1rem", color: "#333" }}>Inicio</Link>
-          <Link href="/contacto" style={{ color: "#333", fontWeight: "bold" }}>Contacto</Link>
-        </nav>
+    <div className="contact-page">
+      <header className="contact-header">
+        <div className="brand-row">
+          <div className="brand"><span className="brand-g">G</span>loslip</div>
+          <nav className="contact-nav">
+            <Link href="/" className="nav-link">Inicio</Link>
+            <Link href="/contacto" className="nav-link nav-link-active">Contacto</Link>
+          </nav>
+        </div>
       </header>
 
-      <main>
-        <section style={{ maxWidth: "500px", margin: "0 auto", textAlign: "center" }}>
-          <h2>Escríbenos</h2>
-          <p>¿Dudas sobre algún gloss? ¡Estamos para ayudarte!</p>
+      <main className="contact-main">
+        <section className="contact-panel">
+          <div className="contact-copy">
+            <span className="eyebrow">Contacto</span>
+            <h1>Hablemos de tu próximo tono</h1>
+            <p>Escribinos para preguntar por stock, tonos nuevos o pedidos especiales. Te respondemos rápido.</p>
+          </div>
 
           {enviado ? (
-            <p style={{ color: "green", marginTop: "2rem" }}>¡Mensaje enviado con éxito! Te responderemos pronto.</p>
+            <div className="contact-message success">
+              ¡Mensaje enviado con éxito! Te responderemos pronto.
+            </div>
           ) : (
-            <form onSubmit={manejarEnvio} style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "2rem" }}>
-              <textarea 
-                rows="5"
+            <form className="contact-form" onSubmit={manejarEnvio}>
+              <textarea
+                rows="6"
                 placeholder="Escribe tu mensaje aquí..."
                 value={mensaje}
                 onChange={(e) => setMensaje(e.target.value)}
-                style={{ padding: "1rem", borderRadius: "8px", border: "1px solid #ccc" }}
+                className="contact-field"
               />
-              {error && <p style={{ color: "red", fontSize: "0.9rem" }}>{error}</p>}
-              
-              <button type="submit" style={{ padding: "0.8rem", backgroundColor: "#333", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }}>
-                Enviar Mensaje
+              {error && <p className="contact-error">{error}</p>}
+              <button type="submit" className="btn btn-primary contact-submit">
+                Enviar mensaje
               </button>
             </form>
           )}
         </section>
       </main>
-    </>
+    </div>
   );
 }
