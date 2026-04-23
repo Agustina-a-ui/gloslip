@@ -123,7 +123,7 @@ export default function Home() {
           
           <nav className="header-nav">
             <Link href="/#inicio">Inicio</Link>
-            <Link href="/#catalogo">Catálogo</Link>
+            <Link href="/catalogo">Catálogo</Link> {/* <-- BIEN: Sin el # */}
             <Link href="/contacto">Contacto</Link>
           </nav>
 
@@ -157,10 +157,10 @@ export default function Home() {
                   Color intenso y duradero que realza tu belleza natural.
                 </p>
                 <div className="hero-actions">
-                  <Link href="/#catalogo" className="btn btn-primary">
+                  <Link href="/catalogo" className="btn btn-primary">
                     Descubrir colección
                   </Link>
-                  <Link href="/contacto" className="btn btn-ghost">Contáctanos</Link>
+                  {/* ... */}
                 </div>
                 <div className="hero-stats">
                   <div className="stat">
@@ -297,11 +297,10 @@ export default function Home() {
         <section id="catalogo" className="catalogo-section">
           
           <div className="section-header">
-            {/* Texto dinámico dependiendo de si busca o no */}
             {!estaBuscando ? (
               <>
                 <h2>Nuestros tonos favoritos</h2>
-                <p>Tonos curados con acabados confortables, pensados para destacar sin esfuerzo.</p>
+                <p>Una selección exclusiva de nuestros labiales más pedidos.</p>
               </>
             ) : (
               <>
@@ -316,29 +315,41 @@ export default function Home() {
           ) : filtrados.length === 0 ? (
             <p className="text-center text-muted">No encontramos resultados. ¡Prueba buscando otro tono!</p>
           ) : (
-            <div className="catalog-grid">
-              {filtrados.map((prod, index) => (
-                <article
-                  key={prod.id}
-                  className="product-card"
-                  ref={(el) => {
-                    if (el) cardsRef.current[index] = el;
-                  }}
-                >
-                  <div className="product-image">
-                    <img src={prod.imagen} alt={`Foto de ${prod.nombre}`} />
-                    <Link href={`/producto/${prod.id}`} className="hover-overlay">
-                      <span className="ver-detalle-btn">Ver detalle</span>
-                    </Link>
-                  </div>
-                  <div className="product-info">
-                    <h3 className="product-name">{prod.nombre}</h3>
-                    <p className="product-desc">Tipo: {prod.tipo}</p>
-                    <p className="product-price">${prod.precio}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <>
+              <div className="catalog-grid">
+                {/* LA MAGIA SUCEDE ACÁ: Si busca, muestra filtrados. Si no, corta los primeros 3 */}
+                {(estaBuscando ? filtrados : productos.slice(0, 3)).map((prod, index) => (
+                  <article
+                    key={prod.id}
+                    className="product-card"
+                    ref={(el) => {
+                      if (el) cardsRef.current[index] = el;
+                    }}
+                  >
+                    <div className="product-image">
+                      <img src={prod.imagen} alt={`Foto de ${prod.nombre}`} />
+                      <Link href={`/producto/${prod.id}`} className="hover-overlay">
+                        <span className="ver-detalle-btn">Ver detalle</span>
+                      </Link>
+                    </div>
+                    <div className="product-info">
+                      <h3 className="product-name">{prod.nombre}</h3>
+                      <p className="product-desc">Tipo: {prod.tipo}</p>
+                      <p className="product-price">${prod.precio}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              {/* BOTÓN PARA IR AL CATÁLOGO COMPLETO (Solo aparece si NO está buscando) */}
+              {!estaBuscando && (
+                <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                  <Link href="/catalogo" className="btn btn-primary" style={{ padding: '1rem 3rem' }}>
+                    Ver catálogo completo
+                  </Link>
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>

@@ -61,9 +61,9 @@ export default function ProductoDetalle() {
           
           <nav className="header-nav">
             <Link href="/#inicio">Inicio</Link>
-            <Link href="/#catalogo">Catálogo</Link>
+            <Link href="/catalogo">Catálogo</Link>  {/* <--- Sacale el # y dejá solo /catalogo */}
             <Link href="/contacto">Contacto</Link>
-          </nav>
+         </nav>
 
           <div className="header-search-right">
             <input
