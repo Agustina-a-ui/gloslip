@@ -35,15 +35,14 @@ export default function Home() {
     obtenerProductos();
   }, []);
 
-  // 2. ANIMACIÓN REFORZADA (Evita que se rompa al volver atrás)
-  // 2. ANIMACIÓN A PRUEBA DE BALAS (Para cuando vuelves atrás)
+  // 2. ANIMACIÓN A PRUEBA DE BALAS
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-            observer.unobserve(entry.target); // Deja de observarlo una vez que ya apareció
+            observer.unobserve(entry.target); 
           }
         });
       },
@@ -53,17 +52,15 @@ export default function Home() {
     const timer = setTimeout(() => {
       cardsRef.current.forEach((card) => { 
         if (card) {
-          // Si al cargar la página el producto YA está en la pantalla (porque volviste atrás), muéstralo de una.
           const rect = card.getBoundingClientRect();
           if (rect.top < window.innerHeight) {
             card.classList.add('visible');
           } else {
-            // Si está más abajo, lo observamos para que se anime al hacer scroll
             observer.observe(card); 
           }
         }
       });
-    }, 150); // Le damos 150ms a Next.js para que dibuje la página antes de calcular
+    }, 150); 
 
     return () => {
       clearTimeout(timer);
@@ -111,25 +108,25 @@ export default function Home() {
   const capTX     = capMotion * 40;
   const capTY     = capMotion * -25;
 
+  // Variable para saber si el usuario está buscando algo
+  const estaBuscando = busqueda.trim() !== '';
+
   return (
     <>
       <div className="noise-overlay" />
 
-      {/* HEADER: AHORA CON MENÚ AL CENTRO Y BUSCADOR A LA DERECHA */}
+      {/* HEADER STICKY */}
       <div className="nav-wrap sticky-nav">
         <div className="nav-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           
-          {/* IZQUIERDA: Logo */}
           <div className="brand"><span className="brand-g">G</span>loslip</div>
           
-          {/* CENTRO: Menú de navegación (Corregido con /# para que vuelva siempre al inicio) */}
           <nav className="header-nav">
             <Link href="/#inicio">Inicio</Link>
             <Link href="/#catalogo">Catálogo</Link>
             <Link href="/contacto">Contacto</Link>
           </nav>
 
-          {/* DERECHA: Buscador */}
           <div className="header-search-right">
             <input
               type="text"
@@ -138,174 +135,186 @@ export default function Home() {
               onChange={manejarBusqueda}
             />
           </div>
-
         </div>
       </div>
 
-      <header className="site-header" id="inicio">
-        <section className="hero">
-          <div className="hero-copy">
-            <div className="eyebrow-wrap">
-              <span className="eyebrow-line" />
-              <p className="eyebrow">Colección Primavera · 2026</p>
+      {/* RENDERIZADO CONDICIONAL: Solo mostramos esto si NO está buscando */}
+      {!estaBuscando && (
+        <>
+          <header className="site-header" id="inicio">
+            <section className="hero">
+              <div className="hero-copy">
+                <div className="eyebrow-wrap">
+                  <span className="eyebrow-line" />
+                  <p className="eyebrow">Colección Primavera · 2026</p>
+                </div>
+                <h1 className="h1-hero">
+                  <span className="h1-sub">Descubre tu</span>
+                  <span className="h1-main">tono perfecto</span>
+                </h1>
+                <p className="hero-desc">
+                  Labiales de alta pigmentación con fórmula enriquecida con vitamina E.
+                  Color intenso y duradero que realza tu belleza natural.
+                </p>
+                <div className="hero-actions">
+                  <Link href="/#catalogo" className="btn btn-primary">
+                    Descubrir colección
+                  </Link>
+                  <Link href="/contacto" className="btn btn-ghost">Contáctanos</Link>
+                </div>
+                <div className="hero-stats">
+                  <div className="stat">
+                    <span className="stat-num">24</span>
+                    <span className="stat-label">Colores</span>
+                  </div>
+                  <div className="stat-divider" />
+                  <div className="stat">
+                    <span className="stat-num">12h</span>
+                    <span className="stat-label">Pigmentación</span>
+                  </div>
+                  <div className="stat-divider" />
+                  <div className="stat">
+                    <span className="stat-num">100%</span>
+                    <span className="stat-label">Vegano</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="hero-visual">
+                <div className="hero-glow" />
+                <div
+                  className="hero-image-wrap"
+                  ref={heroWrapperRef}
+                  style={{ transform: `translateY(${translateY}px) rotate(${rotateZ}deg)` }}
+                >
+                  <svg
+                    className="lipstick-svg"
+                    viewBox="0 0 220 420"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ overflow: 'visible' }} 
+                  >
+                    <defs>
+                      <linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%"   stopColor="#e8c0b4"/>
+                        <stop offset="40%"  stopColor="#f5d8d0"/>
+                        <stop offset="100%" stopColor="#d9a898"/>
+                      </linearGradient>
+                      <linearGradient id="bodyShine" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%"   stopColor="#fff" stopOpacity="0"/>
+                        <stop offset="35%"  stopColor="#fff" stopOpacity="0.22"/>
+                        <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
+                      </linearGradient>
+                      <linearGradient id="goldG" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%"   stopColor="#c9907a"/>
+                        <stop offset="40%"  stopColor="#e8b8a8"/>
+                        <stop offset="70%"  stopColor="#f5d0c4"/>
+                        <stop offset="100%" stopColor="#c0887a"/>
+                      </linearGradient>
+                      <linearGradient id="gold2G" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%"   stopColor="#be8070"/>
+                        <stop offset="50%"  stopColor="#dca898"/>
+                        <stop offset="100%" stopColor="#be8070"/>
+                      </linearGradient>
+                      <linearGradient id="bulG" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%"   stopColor="#8b3050"/>
+                        <stop offset="30%"  stopColor="#c0486a"/>
+                        <stop offset="60%"  stopColor="#d4748a"/>
+                        <stop offset="100%" stopColor="#8b3050"/>
+                      </linearGradient>
+                      <linearGradient id="bulShine" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%"   stopColor="#fff" stopOpacity="0"/>
+                        <stop offset="38%"  stopColor="#fff" stopOpacity="0.22"/>
+                        <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
+                      </linearGradient>
+                      <linearGradient id="capG" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%"   stopColor="#f0e4e0"/>
+                        <stop offset="40%"  stopColor="#fdf6f4"/>
+                        <stop offset="100%" stopColor="#e8d8d4"/>
+                      </linearGradient>
+                      <linearGradient id="capShine" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%"   stopColor="#fff" stopOpacity="0"/>
+                        <stop offset="35%"  stopColor="#fff" stopOpacity="0.28"/>
+                        <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
+                      </linearGradient>
+                      <filter id="bulletGlow">
+                        <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#d4748a" floodOpacity="0.38"/>
+                      </filter>
+                    </defs>
+                    <g>
+                      <rect x="62" y="358" width="96" height="18" rx="9" fill="url(#goldG)"/>
+                      <rect x="58" y="190" width="104" height="172" rx="10" fill="url(#bodyG)"/>
+                      <rect x="58" y="190" width="104" height="172" rx="10" fill="url(#bodyShine)"/>
+                      <rect x="58" y="348" width="104" height="14" rx="4" fill="url(#goldG)"/>
+                      <rect x="74" y="268" width="72" height="1.2" rx="1" fill="#c9907a" opacity="0.4"/>
+                      <rect x="82" y="276" width="56" height="0.8" rx="1" fill="#c9907a" opacity="0.22"/>
+                      <text x="110" y="325" textAnchor="middle" fontFamily="Georgia, serif" fontSize="20" fontStyle="italic" fill="#b07060" opacity="0.55" letterSpacing="2">G</text>
+                    </g>
+                    <g>
+                      <rect x="54" y="178" width="112" height="22" rx="5" fill="url(#goldG)"/>
+                      <rect x="58" y="183" width="104" height="12" rx="3" fill="url(#gold2G)"/>
+                    </g>
+                    <g style={{ transform: `translateY(${bulletTY}px)`, transition: 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)' }} filter="url(#bulletGlow)">
+                      <rect x="68" y="110" width="84" height="74" fill="url(#bulG)"/>
+                      <rect x="68" y="110" width="84" height="74" fill="url(#bulShine)"/>
+                      <path d="M68 110 Q68 62 110 44 Q152 62 152 110 Z" fill="url(#bulG)"/>
+                      <path d="M68 110 Q68 62 110 44 Q152 62 152 110 Z" fill="url(#bulShine)"/>
+                      <path d="M80 98 Q85 70 100 56" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" opacity="0.3"/>
+                      <rect x="64" y="176" width="92" height="10" rx="3" fill="url(#goldG)"/>
+                    </g>
+                    <g style={{ transform: `translate(${capTX}px, ${capTY}px) rotate(${capRotate}deg)`, transformOrigin: '110px 310px', transition: 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1)' }}>
+                      <rect x="56" y="22" width="108" height="162" rx="14" fill="url(#capG)"/>
+                      <rect x="56" y="22" width="108" height="162" rx="14" fill="url(#capShine)"/>
+                      <ellipse cx="110" cy="22" rx="54" ry="10" fill="#f0e6e2"/>
+                      <rect x="56" y="168" width="108" height="16" rx="4" fill="url(#goldG)"/>
+                      <rect x="72" y="78" width="76" height="1.2" rx="1" fill="#c9907a" opacity="0.3"/>
+                      <rect x="80" y="88" width="60" height="0.8" rx="1" fill="#c9907a" opacity="0.15"/>
+                      <text x="110" y="138" textAnchor="middle" fontFamily="Georgia, serif" fontSize="26" fontStyle="italic" fill="#c9907a" opacity="0.55" letterSpacing="3">G</text>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </section>
+
+            <div className="scroll-hint">
+              <div className="scroll-hint-line" />
+              <span>scroll</span>
             </div>
-            <h1 className="h1-hero">
-              <span className="h1-sub">Descubre tu</span>
-              <span className="h1-main">tono perfecto</span>
-            </h1>
-            <p className="hero-desc">
-              Labiales de alta pigmentación con fórmula enriquecida con vitamina E.
-              Color intenso y duradero que realza tu belleza natural.
-            </p>
-            <div className="hero-actions">
-              <Link href="/#catalogo" className="btn btn-primary">
-                Descubrir colección
-              </Link>
-              <Link href="/contacto" className="btn btn-ghost">Contáctanos</Link>
-            </div>
-            <div className="hero-stats">
-              <div className="stat">
-                <span className="stat-num">24</span>
-                <span className="stat-label">Colores</span>
-              </div>
-              <div className="stat-divider" />
-              <div className="stat">
-                <span className="stat-num">12h</span>
-                <span className="stat-label">Pigmentación</span>
-              </div>
-              <div className="stat-divider" />
-              <div className="stat">
-                <span className="stat-num">100%</span>
-                <span className="stat-label">Vegano</span>
-              </div>
+          </header>
+
+          <div className="marquee-wrap">
+            <div className="marquee-track">
+              <span>✧ 100% VEGANO ✧ CRUELTY FREE ✧ LARGA DURACIÓN ✧ ALTA PIGMENTACIÓN ✧ EDICIÓN LIMITADA </span>
+              <span>✧ 100% VEGANO ✧ CRUELTY FREE ✧ LARGA DURACIÓN ✧ ALTA PIGMENTACIÓN ✧ EDICIÓN LIMITADA </span>
+              <span>✧ 100% VEGANO ✧ CRUELTY FREE ✧ LARGA DURACIÓN ✧ ALTA PIGMENTACIÓN ✧ EDICIÓN LIMITADA </span>
             </div>
           </div>
+        </>
+      )}
 
-          <div className="hero-visual">
-            <div className="hero-glow" />
-            <div
-              className="hero-image-wrap"
-              ref={heroWrapperRef}
-              style={{ transform: `translateY(${translateY}px) rotate(${rotateZ}deg)` }}
-            >
-              <svg
-                className="lipstick-svg"
-                viewBox="0 0 220 420"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style={{ overflow: 'visible' }} 
-              >
-                <defs>
-                  <linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%"   stopColor="#e8c0b4"/>
-                    <stop offset="40%"  stopColor="#f5d8d0"/>
-                    <stop offset="100%" stopColor="#d9a898"/>
-                  </linearGradient>
-                  <linearGradient id="bodyShine" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%"   stopColor="#fff" stopOpacity="0"/>
-                    <stop offset="35%"  stopColor="#fff" stopOpacity="0.22"/>
-                    <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
-                  </linearGradient>
-                  <linearGradient id="goldG" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%"   stopColor="#c9907a"/>
-                    <stop offset="40%"  stopColor="#e8b8a8"/>
-                    <stop offset="70%"  stopColor="#f5d0c4"/>
-                    <stop offset="100%" stopColor="#c0887a"/>
-                  </linearGradient>
-                  <linearGradient id="gold2G" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%"   stopColor="#be8070"/>
-                    <stop offset="50%"  stopColor="#dca898"/>
-                    <stop offset="100%" stopColor="#be8070"/>
-                  </linearGradient>
-                  <linearGradient id="bulG" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%"   stopColor="#8b3050"/>
-                    <stop offset="30%"  stopColor="#c0486a"/>
-                    <stop offset="60%"  stopColor="#d4748a"/>
-                    <stop offset="100%" stopColor="#8b3050"/>
-                  </linearGradient>
-                  <linearGradient id="bulShine" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%"   stopColor="#fff" stopOpacity="0"/>
-                    <stop offset="38%"  stopColor="#fff" stopOpacity="0.22"/>
-                    <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
-                  </linearGradient>
-                  <linearGradient id="capG" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%"   stopColor="#f0e4e0"/>
-                    <stop offset="40%"  stopColor="#fdf6f4"/>
-                    <stop offset="100%" stopColor="#e8d8d4"/>
-                  </linearGradient>
-                  <linearGradient id="capShine" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%"   stopColor="#fff" stopOpacity="0"/>
-                    <stop offset="35%"  stopColor="#fff" stopOpacity="0.28"/>
-                    <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
-                  </linearGradient>
-                  <filter id="bulletGlow">
-                    <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#d4748a" floodOpacity="0.38"/>
-                  </filter>
-                </defs>
-
-                <g>
-                  <rect x="62" y="358" width="96" height="18" rx="9" fill="url(#goldG)"/>
-                  <rect x="58" y="190" width="104" height="172" rx="10" fill="url(#bodyG)"/>
-                  <rect x="58" y="190" width="104" height="172" rx="10" fill="url(#bodyShine)"/>
-                  <rect x="58" y="348" width="104" height="14" rx="4" fill="url(#goldG)"/>
-                  <rect x="74" y="268" width="72" height="1.2" rx="1" fill="#c9907a" opacity="0.4"/>
-                  <rect x="82" y="276" width="56" height="0.8" rx="1" fill="#c9907a" opacity="0.22"/>
-                  <text x="110" y="325" textAnchor="middle" fontFamily="Georgia, serif" fontSize="20" fontStyle="italic" fill="#b07060" opacity="0.55" letterSpacing="2">G</text>
-                </g>
-
-                <g>
-                  <rect x="54" y="178" width="112" height="22" rx="5" fill="url(#goldG)"/>
-                  <rect x="58" y="183" width="104" height="12" rx="3" fill="url(#gold2G)"/>
-                </g>
-
-                <g style={{ transform: `translateY(${bulletTY}px)`, transition: 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)' }} filter="url(#bulletGlow)">
-                  <rect x="68" y="110" width="84" height="74" fill="url(#bulG)"/>
-                  <rect x="68" y="110" width="84" height="74" fill="url(#bulShine)"/>
-                  <path d="M68 110 Q68 62 110 44 Q152 62 152 110 Z" fill="url(#bulG)"/>
-                  <path d="M68 110 Q68 62 110 44 Q152 62 152 110 Z" fill="url(#bulShine)"/>
-                  <path d="M80 98 Q85 70 100 56" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" opacity="0.3"/>
-                  <rect x="64" y="176" width="92" height="10" rx="3" fill="url(#goldG)"/>
-                </g>
-
-                <g style={{ transform: `translate(${capTX}px, ${capTY}px) rotate(${capRotate}deg)`, transformOrigin: '110px 310px', transition: 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1)' }}>
-                  <rect x="56" y="22" width="108" height="162" rx="14" fill="url(#capG)"/>
-                  <rect x="56" y="22" width="108" height="162" rx="14" fill="url(#capShine)"/>
-                  <ellipse cx="110" cy="22" rx="54" ry="10" fill="#f0e6e2"/>
-                  <rect x="56" y="168" width="108" height="16" rx="4" fill="url(#goldG)"/>
-                  <rect x="72" y="78" width="76" height="1.2" rx="1" fill="#c9907a" opacity="0.3"/>
-                  <rect x="80" y="88" width="60" height="0.8" rx="1" fill="#c9907a" opacity="0.15"/>
-                  <text x="110" y="138" textAnchor="middle" fontFamily="Georgia, serif" fontSize="26" fontStyle="italic" fill="#c9907a" opacity="0.55" letterSpacing="3">G</text>
-                </g>
-              </svg>
-            </div>
-          </div>
-        </section>
-
-        <div className="scroll-hint">
-          <div className="scroll-hint-line" />
-          <span>scroll</span>
-        </div>
-      </header>
-
-      <div className="marquee-wrap">
-        <div className="marquee-track">
-          <span>✧ 100% VEGANO ✧ CRUELTY FREE ✧ LARGA DURACIÓN ✧ ALTA PIGMENTACIÓN ✧ EDICIÓN LIMITADA </span>
-          <span>✧ 100% VEGANO ✧ CRUELTY FREE ✧ LARGA DURACIÓN ✧ ALTA PIGMENTACIÓN ✧ EDICIÓN LIMITADA </span>
-          <span>✧ 100% VEGANO ✧ CRUELTY FREE ✧ LARGA DURACIÓN ✧ ALTA PIGMENTACIÓN ✧ EDICIÓN LIMITADA </span>
-        </div>
-      </div>
-
-      <main>
+      {/* Al main le agregamos un margen arriba si está buscando, para que el header no lo tape */}
+      <main style={{ paddingTop: estaBuscando ? '120px' : '0', minHeight: estaBuscando ? '100vh' : 'auto' }}>
         <section id="catalogo" className="catalogo-section">
+          
           <div className="section-header">
-            <h2>Nuestros tonos favoritos</h2>
-            <p>Tonos curados con acabados confortables, pensados para destacar sin esfuerzo.</p>
+            {/* Texto dinámico dependiendo de si busca o no */}
+            {!estaBuscando ? (
+              <>
+                <h2>Nuestros tonos favoritos</h2>
+                <p>Tonos curados con acabados confortables, pensados para destacar sin esfuerzo.</p>
+              </>
+            ) : (
+              <>
+                <h2>Resultados de búsqueda</h2>
+                <p>Encontramos {filtrados.length} {filtrados.length === 1 ? 'tono' : 'tonos'} para "{busqueda}"</p>
+              </>
+            )}
           </div>
 
           {cargando ? (
             <p className="text-center text-muted">Cargando la colección...</p>
           ) : filtrados.length === 0 ? (
-            <p className="text-center text-muted">No encontramos resultados para "{busqueda}"</p>
+            <p className="text-center text-muted">No encontramos resultados. ¡Prueba buscando otro tono!</p>
           ) : (
             <div className="catalog-grid">
               {filtrados.map((prod, index) => (
@@ -318,11 +327,9 @@ export default function Home() {
                 >
                   <div className="product-image">
                     <img src={prod.imagen} alt={`Foto de ${prod.nombre}`} />
-                    
                     <Link href={`/producto/${prod.id}`} className="hover-overlay">
                       <span className="ver-detalle-btn">Ver detalle</span>
                     </Link>
-
                   </div>
                   <div className="product-info">
                     <h3 className="product-name">{prod.nombre}</h3>
@@ -336,19 +343,22 @@ export default function Home() {
         </section>
       </main>
 
-      <footer>
-        <div className="footer-content">
-          <div className="footer-brand">
-            <span className="brand"><span className="brand-g">G</span>loslip</span>
+      {/* Solo mostramos el footer si NO está buscando */}
+      {!estaBuscando && (
+        <footer>
+          <div className="footer-content">
+            <div className="footer-brand">
+              <span className="brand"><span className="brand-g">G</span>loslip</span>
+            </div>
+            <div className="footer-links">
+              <Link href="/contacto">Contacto</Link>
+              <Link href="#">Instagram</Link>
+              <Link href="#">TikTok</Link>
+            </div>
+            <p className="footer-copy">© 2026 Gloslip · Todos los derechos reservados</p>
           </div>
-          <div className="footer-links">
-            <Link href="/contacto">Contacto</Link>
-            <Link href="#">Instagram</Link>
-            <Link href="#">TikTok</Link>
-          </div>
-          <p className="footer-copy">© 2026 Gloslip · Todos los derechos reservados</p>
-        </div>
-      </footer>
+        </footer>
+      )}
     </>
   );
 }
