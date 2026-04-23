@@ -62,10 +62,10 @@ export default function Home() {
   const translateY = scrollVal * -32;
   const rotateZ   = scrollVal * 9;
   const capMotion = openVal;
-  const bulletTY  = capMotion * -22;
-  const capRotate = capMotion * -62;
-  const capTX     = capMotion * 70;
-  const capTY     = capMotion * -45;
+  const bulletTY  = capMotion * -18;
+  const capRotate = capMotion * -35;
+  const capTX     = capMotion * 40;
+  const capTY     = capMotion * -25;
 
   return (
     <>
@@ -80,7 +80,7 @@ export default function Home() {
             <Link href="/contacto">Contacto</Link>
           </nav>
           <div className="nav-cta">
-            <Link href="#catalogo" className="btn btn-nav">Ver colección</Link>
+            <Link href="#catalogo" className="btn btn-nav">Descubrir</Link>
           </div>
         </div>
 
@@ -88,34 +88,34 @@ export default function Home() {
           <div className="hero-copy">
             <div className="eyebrow-wrap">
               <span className="eyebrow-line" />
-              <p className="eyebrow">Edición limitada · 2026</p>
+              <p className="eyebrow">Colección Primavera · 2026</p>
             </div>
             <h1>
-              <span className="h1-sub">El color que</span>
-              <span className="h1-main">te define</span>
+              <span className="h1-sub">Descubre tu</span>
+              <span className="h1-main">tono perfecto</span>
             </h1>
             <p className="hero-desc">
-              Labiales de acabado sedoso con fórmula de larga duración.
-              Cada tono, una declaración.
+              Labiales de alta pigmentación con fórmula enriquecida con vitamina E.
+              Color intenso y duradero que realza tu belleza natural.
             </p>
             <div className="hero-actions">
               <Link href="#catalogo" className="btn btn-primary">
-                <span>Explorar colección</span>
+                <span>Descubrir colección</span>
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </Link>
-              <Link href="/contacto" className="btn btn-ghost">Contacto</Link>
+              <Link href="/contacto" className="btn btn-ghost">Contáctanos</Link>
             </div>
             <div className="hero-stats">
               <div className="stat">
                 <span className="stat-num">24</span>
-                <span className="stat-label">Tonos</span>
+                <span className="stat-label">Colores</span>
               </div>
               <div className="stat-divider" />
               <div className="stat">
                 <span className="stat-num">12h</span>
-                <span className="stat-label">Duración</span>
+                <span className="stat-label">Pigmentación</span>
               </div>
               <div className="stat-divider" />
               <div className="stat">
