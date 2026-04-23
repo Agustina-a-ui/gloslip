@@ -14,8 +14,12 @@ export default function Home() {
   useEffect(() => {
     const obtenerProductos = async () => {
       try {
-        const respuesta = await fetch('/productos.json');
-        const datos = await respuesta.json();
+        // Temporalmente usar datos hardcodeados
+        const datos = [
+          { id: 1, nombre: "Velvet Mate Cherry", tipo: "labial", precio: 15000, imagen: "/labial-pa.jpg" },
+          { id: 2, nombre: "Gloss Crystal Clear", tipo: "gloss", precio: 12000, imagen: "/labial-cherry.png" },
+          { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, imagen: "/labial-cerrado.jpg" }
+        ];
         setProductos(datos);
         setCargando(false);
       } catch (error) {
