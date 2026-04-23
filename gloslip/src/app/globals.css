@@ -379,17 +379,57 @@ footer {
   .catalog-grid { grid-template-columns: 1fr; }
   .contact-form { padding: 2rem; }
 }
+/* =========================================
+   BUSCADOR EN EL HEADER
+========================================= */
+/* =========================================
+   BUSCADOR Y MENÚ EN EL HEADER
+========================================= */
+.header-nav {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center; /* Centra los enlaces (Inicio, Catálogo, Contacto) */
+  gap: 2rem;
+}
 
-.marquee-wrap {
+.header-search-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.header-search-right input {
   width: 100%;
-  overflow: hidden;
-  background-color: #c9907a; /* Color base (rose/gold de tu paleta) */
-  color: #fff;
+  max-width: 250px;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(201, 144, 122, 0.4);
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  color: #333;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.header-search-right input:focus {
+  border-color: #c9907a;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(201, 144, 122, 0.1);
+}
+
+/* =========================================
+   MARQUEE PROFESIONAL (Minimalista)
+========================================= */
+.marquee-wrap {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%); /* Hace que no importa dónde esté, ocupe el 100% de la pantalla */
+  border-top: 1px solid rgba(201, 144, 122, 0.3);
+  border-bottom: 1px solid rgba(201, 144, 122, 0.3);
+  background-color: transparent;
+  color: #c9907a; /* Color de tu paleta */
   padding: 1rem 0;
   display: flex;
   align-items: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
 }
 
 .marquee-track {
@@ -400,16 +440,213 @@ footer {
 }
 
 .marquee-track span {
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 2px;
-  padding-right: 1rem; /* Espacio entre cada repetición de texto */
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 3px;
+  padding-right: 3rem;
   text-transform: uppercase;
 }
 
-/* Animación infinita */
 @keyframes scroll-marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); } 
-  /* Nota: traslada un 50% porque tenemos el texto lo suficientemente duplicado para que no se note el salto */
+}
+
+/* =========================================
+   GRILLA (Mantiene el tamaño al buscar)
+========================================= */
+.catalog-grid {
+  display: grid;
+  /* El auto-fill es lo que arregla que no se haga gigante */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  justify-content: center; 
+}
+
+.product-card {
+  width: 100%;
+  max-width: 320px; /* Tamaño máximo fijado */
+  margin: 0 auto;
+}
+
+/* =========================================
+   EFECTO HOVER "VER DETALLE"
+========================================= */
+.product-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.product-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.hover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 253, 252, 0.75); /* Fondo claro semi-transparente */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* Oculto por defecto */
+  transition: opacity 0.3s ease;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.ver-detalle-btn {
+  background: #c9907a;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transform: translateY(10px);
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .hover-overlay {
+  opacity: 1; /* Muestra el overlay */
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.05); /* Efecto de acercar un poquito la foto */
+}
+
+.product-card:hover .ver-detalle-btn {
+  transform: translateY(0);
+}
+/* =========================================
+   PÁGINA DE DETALLE DE PRODUCTO
+========================================= */
+.detail-main {
+  padding: 8rem 2rem 4rem; /* El padding-top es más grande para que el header no tape el contenido */
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
+}
+
+.detail-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 2rem;
+  color: #b07060;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.back-link:hover {
+  color: #8b3050;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+/* En celulares, la foto va arriba y el texto abajo */
+@media (max-width: 768px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.detail-image-box {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(201, 144, 122, 0.15);
+  background: white; /* Por si tus fotos tienen transparencias */
+}
+
+.detail-image-box img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-type {
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: #c9907a;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.detail-name {
+  font-size: 2.8rem;
+  color: #333;
+  margin: 0 0 1rem;
+  font-family: Georgia, serif;
+  line-height: 1.1;
+}
+
+.detail-price {
+  font-size: 1.8rem;
+  color: #8b3050;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.detail-description p {
+  color: #555;
+  line-height: 1.7;
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+}
+
+.detail-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(201, 144, 122, 0.2);
+}
+
+.detail-benefits span {
+  font-size: 0.95rem;
+  color: #444;
+  font-weight: 500;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  padding: 1.2rem;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-radius: 30px;
+}
+
+.detail-msg {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #8b3050;
 }

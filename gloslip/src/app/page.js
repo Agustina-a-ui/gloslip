@@ -13,6 +13,7 @@ export default function Home() {
   const [scrollVal, setScrollVal] = useState(0);
   const [openVal, setOpenVal] = useState(0);
 
+  // 1. CARGA DE PRODUCTOS
   useEffect(() => {
     const obtenerProductos = async () => {
       try {
@@ -34,19 +35,43 @@ export default function Home() {
     obtenerProductos();
   }, []);
 
+  // 2. ANIMACIÓN REFORZADA (Evita que se rompa al volver atrás)
+  // 2. ANIMACIÓN A PRUEBA DE BALAS (Para cuando vuelves atrás)
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add('visible');
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target); // Deja de observarlo una vez que ya apareció
+          }
         });
       },
       { threshold: 0.1 }
     );
-    cardsRef.current.forEach((card) => { if (card) observer.observe(card); });
-    return () => observer.disconnect();
-  }, [productos]);
 
+    const timer = setTimeout(() => {
+      cardsRef.current.forEach((card) => { 
+        if (card) {
+          // Si al cargar la página el producto YA está en la pantalla (porque volviste atrás), muéstralo de una.
+          const rect = card.getBoundingClientRect();
+          if (rect.top < window.innerHeight) {
+            card.classList.add('visible');
+          } else {
+            // Si está más abajo, lo observamos para que se anime al hacer scroll
+            observer.observe(card); 
+          }
+        }
+      });
+    }, 150); // Le damos 150ms a Next.js para que dibuje la página antes de calcular
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [filtrados]);
+
+  // 3. ANIMACIÓN DEL HERO (LABIAL)
   useEffect(() => {
     const onScroll = () => {
       const scrollY = window.scrollY;
@@ -63,6 +88,7 @@ export default function Home() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // 4. BUSCADOR
   const manejarBusqueda = (e) => {
     const valor = e.target.value.toLowerCase();
     setBusqueda(valor);
@@ -89,18 +115,30 @@ export default function Home() {
     <>
       <div className="noise-overlay" />
 
-      {/* HEADER STICKY (Independiente del hero) */}
+      {/* HEADER: AHORA CON MENÚ AL CENTRO Y BUSCADOR A LA DERECHA */}
       <div className="nav-wrap sticky-nav">
-        <div className="nav-inner">
+        <div className="nav-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          
+          {/* IZQUIERDA: Logo */}
           <div className="brand"><span className="brand-g">G</span>loslip</div>
-          <nav>
-            <Link href="#inicio">Inicio</Link>
-            <Link href="#catalogo">Catálogo</Link>
+          
+          {/* CENTRO: Menú de navegación (Corregido con /# para que vuelva siempre al inicio) */}
+          <nav className="header-nav">
+            <Link href="/#inicio">Inicio</Link>
+            <Link href="/#catalogo">Catálogo</Link>
             <Link href="/contacto">Contacto</Link>
           </nav>
-          <div className="nav-cta">
-            <Link href="#catalogo" className="btn btn-nav">Descubrir</Link>
+
+          {/* DERECHA: Buscador */}
+          <div className="header-search-right">
+            <input
+              type="text"
+              placeholder="🔍 Buscar tono..."
+              value={busqueda}
+              onChange={manejarBusqueda}
+            />
           </div>
+
         </div>
       </div>
 
@@ -120,7 +158,7 @@ export default function Home() {
               Color intenso y duradero que realza tu belleza natural.
             </p>
             <div className="hero-actions">
-              <Link href="#catalogo" className="btn btn-primary">
+              <Link href="/#catalogo" className="btn btn-primary">
                 Descubrir colección
               </Link>
               <Link href="/contacto" className="btn btn-ghost">Contáctanos</Link>
@@ -150,7 +188,6 @@ export default function Home() {
               ref={heroWrapperRef}
               style={{ transform: `translateY(${translateY}px) rotate(${rotateZ}deg)` }}
             >
-              {/* ── LABIAL SVG GIRLY (Con overflow: visible) ── */}
               <svg
                 className="lipstick-svg"
                 viewBox="0 0 220 420"
@@ -250,14 +287,11 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ── TIRA ANIMADA (MARQUEE) ── */}
       <div className="marquee-wrap">
         <div className="marquee-track">
-          {/* Se repite el texto varias veces para que el bucle sea infinito y sin cortes */}
-          <span>✨ 100% VEGANO ✨ CRUELTY FREE ✨ LARGA DURACIÓN ✨ ALTA PIGMENTACIÓN ✨ TONOS EXCLUSIVOS </span>
-          <span>✨ 100% VEGANO ✨ CRUELTY FREE ✨ LARGA DURACIÓN ✨ ALTA PIGMENTACIÓN ✨ TONOS EXCLUSIVOS </span>
-          <span>✨ 100% VEGANO ✨ CRUELTY FREE ✨ LARGA DURACIÓN ✨ ALTA PIGMENTACIÓN ✨ TONOS EXCLUSIVOS </span>
-          <span>✨ 100% VEGANO ✨ CRUELTY FREE ✨ LARGA DURACIÓN ✨ ALTA PIGMENTACIÓN ✨ TONOS EXCLUSIVOS </span>
+          <span>✧ 100% VEGANO ✧ CRUELTY FREE ✧ LARGA DURACIÓN ✧ ALTA PIGMENTACIÓN ✧ EDICIÓN LIMITADA </span>
+          <span>✧ 100% VEGANO ✧ CRUELTY FREE ✧ LARGA DURACIÓN ✧ ALTA PIGMENTACIÓN ✧ EDICIÓN LIMITADA </span>
+          <span>✧ 100% VEGANO ✧ CRUELTY FREE ✧ LARGA DURACIÓN ✧ ALTA PIGMENTACIÓN ✧ EDICIÓN LIMITADA </span>
         </div>
       </div>
 
@@ -266,15 +300,6 @@ export default function Home() {
           <div className="section-header">
             <h2>Nuestros tonos favoritos</h2>
             <p>Tonos curados con acabados confortables, pensados para destacar sin esfuerzo.</p>
-            <br />
-            <div className="form-group">
-              <input
-                type="text"
-                placeholder="Buscar labial por nombre o tipo..."
-                value={busqueda}
-                onChange={manejarBusqueda}
-              />
-            </div>
           </div>
 
           {cargando ? (
@@ -287,21 +312,22 @@ export default function Home() {
                 <article
                   key={prod.id}
                   className="product-card"
-                  ref={(el) => (cardsRef.current[index] = el)}
+                  ref={(el) => {
+                    if (el) cardsRef.current[index] = el;
+                  }}
                 >
                   <div className="product-image">
                     <img src={prod.imagen} alt={`Foto de ${prod.nombre}`} />
+                    
+                    <Link href={`/producto/${prod.id}`} className="hover-overlay">
+                      <span className="ver-detalle-btn">Ver detalle</span>
+                    </Link>
+
                   </div>
                   <div className="product-info">
                     <h3 className="product-name">{prod.nombre}</h3>
                     <p className="product-desc">Tipo: {prod.tipo}</p>
                     <p className="product-price">${prod.precio}</p>
-                    <div className="product-actions">
-                      <a
-                        href={`mailto:ventas@gloslip.com?subject=Compra%20${encodeURIComponent(prod.nombre)}`}
-                        className="btn btn-ghost"
-                      >Comprar</a>
-                    </div>
                   </div>
                 </article>
               ))}
