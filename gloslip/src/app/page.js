@@ -6,6 +6,8 @@ import Link from "next/link";
 export default function Home() {
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [filtrados, setFiltrados] = useState([]);
+  const [busqueda, setBusqueda] = useState('');
   const cardsRef = useRef([]);
   const heroWrapperRef = useRef(null);
   const [scrollVal, setScrollVal] = useState(0);
@@ -14,13 +16,15 @@ export default function Home() {
   useEffect(() => {
     const obtenerProductos = async () => {
       try {
-        // Temporalmente usar datos hardcodeados
         const datos = [
           { id: 1, nombre: "Velvet Mate Cherry", tipo: "labial", precio: 15000, imagen: "/labial-pa.jpg" },
           { id: 2, nombre: "Gloss Crystal Clear", tipo: "gloss", precio: 12000, imagen: "/labial-cherry.png" },
-          { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, imagen: "/labial-cerrado.jpg" }
+          { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, imagen: "/labial-cerrado.jpg" },
+          { id: 4, nombre: "Berry Bomb Gloss", tipo: "gloss", precio: 13000, imagen: "/labial-pa.jpg" },
+          { id: 5, nombre: "Rose Gold Shimmer", tipo: "labial", precio: 15500, imagen: "/labial-cherry.png" }
         ];
         setProductos(datos);
+        setFiltrados(datos);
         setCargando(false);
       } catch (error) {
         console.error("Error al cargar los labiales:", error);
@@ -59,6 +63,20 @@ export default function Home() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const manejarBusqueda = (e) => {
+    const valor = e.target.value.toLowerCase();
+    setBusqueda(valor);
+    if (valor.trim() === '') {
+      setFiltrados(productos);
+    } else {
+      const resultados = productos.filter((p) =>
+        p.nombre.toLowerCase().includes(valor) ||
+        p.tipo.toLowerCase().includes(valor)
+      );
+      setFiltrados(resultados);
+    }
+  };
+
   const translateY = scrollVal * -32;
   const rotateZ   = scrollVal * 9;
   const capMotion = openVal;
@@ -69,10 +87,10 @@ export default function Home() {
 
   return (
     <>
-      <header className="site-header">
+      <header className="site-header sticky-header">
         <div className="noise-overlay" />
 
-        <div className="nav-wrap">
+        <div className="nav-wrap sticky-nav">
           <div className="brand"><span className="brand-g">G</span>loslip</div>
           <nav>
             <Link href="#inicio">Inicio</Link>
@@ -90,7 +108,7 @@ export default function Home() {
               <span className="eyebrow-line" />
               <p className="eyebrow">Colección Primavera · 2026</p>
             </div>
-            <h1>
+            <h1 className="h1-hero">
               <span className="h1-sub">Descubre tu</span>
               <span className="h1-main">tono perfecto</span>
             </h1>
@@ -282,13 +300,28 @@ export default function Home() {
             </div>
             <h2>Nuestros tonos favoritos</h2>
             <p>Tonos curados con acabados confortables, pensados para destacar sin esfuerzo.</p>
+            <div className="search-wrapper">
+              <input
+                type="text"
+                placeholder="Buscar labial..."
+                className="search-input"
+                value={busqueda}
+                onChange={manejarBusqueda}
+              />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </div>
           </div>
 
           {cargando ? (
             <p className="loading-text">Cargando la colección...</p>
+          ) : filtrados.length === 0 ? (
+            <p className="loading-text">No encontramos resultados para "{busqueda}"</p>
           ) : (
             <div className="catalogo-grid">
-              {productos.map((prod, index) => (
+              {filtrados.map((prod, index) => (
                 <article
                   key={prod.id}
                   className="producto-card"
