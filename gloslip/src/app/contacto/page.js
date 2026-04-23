@@ -1,67 +1,59 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 
 export default function Contacto() {
-  const [mensaje, setMensaje] = useState("");
-  const [error, setError] = useState("");
-  const [enviado, setEnviado] = useState(false);
-
-  const manejarEnvio = (e) => {
-    e.preventDefault();
-
-    if (mensaje.trim() === "") {
-      setError("Por favor, escribe un mensaje antes de enviar.");
-      return;
-    }
-
-    setError("");
-    setEnviado(true);
-    setMensaje("");
-  };
-
   return (
-    <div className="contact-page">
-      <header className="contact-header">
-        <div className="brand-row">
+    <>
+      <div className="nav-wrap sticky-nav">
+        <div className="nav-inner">
           <div className="brand"><span className="brand-g">G</span>loslip</div>
-          <nav className="contact-nav">
-            <Link href="/" className="nav-link">Inicio</Link>
-            <Link href="/contacto" className="nav-link nav-link-active">Contacto</Link>
+          <nav>
+            <Link href="/">Inicio</Link>
+            <Link href="/#catalogo">Catálogo</Link>
+            <Link href="/contacto">Contacto</Link>
           </nav>
         </div>
-      </header>
+      </div>
 
-      <main className="contact-main">
-        <section className="contact-panel">
-          <div className="contact-copy">
-            <span className="eyebrow">Contacto</span>
-            <h1>Hablemos de tu próximo tono</h1>
-            <p>Escribinos para preguntar por stock, tonos nuevos o pedidos especiales. Te respondemos rápido.</p>
+      <main style={{ paddingTop: "100px" }}>
+        <section className="contact-section">
+          <div className="section-header">
+            <h2>Hablemos</h2>
+            <p>¿Tenés dudas sobre algún tono o venta mayorista? Dejanos tu mensaje y te respondemos a la brevedad.</p>
           </div>
 
-          {enviado ? (
-            <div className="contact-message success">
-              ¡Mensaje enviado con éxito! Te responderemos pronto.
-            </div>
-          ) : (
-            <form className="contact-form" onSubmit={manejarEnvio}>
-              <textarea
-                rows="6"
-                placeholder="Escribe tu mensaje aquí..."
-                value={mensaje}
-                onChange={(e) => setMensaje(e.target.value)}
-                className="contact-field"
-              />
-              {error && <p className="contact-error">{error}</p>}
-              <button type="submit" className="btn btn-primary contact-submit">
-                Enviar mensaje
+          <div className="contact-form">
+            <form onSubmit={(e) => e.preventDefault()}>
+              <div className="form-group">
+                <label htmlFor="nombre">Nombre completo</label>
+                <input type="text" id="nombre" placeholder="Ana López" required />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input type="email" id="email" placeholder="ana@ejemplo.com" required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="mensaje">Mensaje</label>
+                <textarea id="mensaje" placeholder="Hola, me gustaría saber sobre..." required></textarea>
+              </div>
+
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+                Enviar Mensaje
               </button>
             </form>
-          )}
+          </div>
         </section>
       </main>
-    </div>
+
+      <footer>
+        <div className="footer-content">
+          <div className="footer-brand">
+            <span className="brand"><span className="brand-g">G</span>loslip</span>
+          </div>
+          <p className="footer-copy">© 2026 Gloslip · Todos los derechos reservados</p>
+        </div>
+      </footer>
+    </>
   );
 }

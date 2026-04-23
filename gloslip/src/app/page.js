@@ -87,10 +87,11 @@ export default function Home() {
 
   return (
     <>
-      <header className="site-header sticky-header">
-        <div className="noise-overlay" />
+      <div className="noise-overlay" />
 
-        <div className="nav-wrap sticky-nav">
+      {/* HEADER STICKY (Independiente del hero) */}
+      <div className="nav-wrap sticky-nav">
+        <div className="nav-inner">
           <div className="brand"><span className="brand-g">G</span>loslip</div>
           <nav>
             <Link href="#inicio">Inicio</Link>
@@ -101,8 +102,10 @@ export default function Home() {
             <Link href="#catalogo" className="btn btn-nav">Descubrir</Link>
           </div>
         </div>
+      </div>
 
-        <section className="hero" id="inicio">
+      <header className="site-header" id="inicio">
+        <section className="hero">
           <div className="hero-copy">
             <div className="eyebrow-wrap">
               <span className="eyebrow-line" />
@@ -118,10 +121,7 @@ export default function Home() {
             </p>
             <div className="hero-actions">
               <Link href="#catalogo" className="btn btn-primary">
-                <span>Descubrir colección</span>
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                Descubrir colección
               </Link>
               <Link href="/contacto" className="btn btn-ghost">Contáctanos</Link>
             </div>
@@ -150,15 +150,15 @@ export default function Home() {
               ref={heroWrapperRef}
               style={{ transform: `translateY(${translateY}px) rotate(${rotateZ}deg)` }}
             >
-              {/* ── LABIAL SVG GIRLY ── */}
+              {/* ── LABIAL SVG GIRLY (Con overflow: visible) ── */}
               <svg
                 className="lipstick-svg"
                 viewBox="0 0 220 420"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                style={{ overflow: 'visible' }} 
               >
                 <defs>
-                  {/* cuerpo — rosado nude */}
                   <linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%"   stopColor="#e8c0b4"/>
                     <stop offset="40%"  stopColor="#f5d8d0"/>
@@ -169,7 +169,6 @@ export default function Home() {
                     <stop offset="35%"  stopColor="#fff" stopOpacity="0.22"/>
                     <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
                   </linearGradient>
-                  {/* detalles dorado rosado */}
                   <linearGradient id="goldG" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%"   stopColor="#c9907a"/>
                     <stop offset="40%"  stopColor="#e8b8a8"/>
@@ -181,7 +180,6 @@ export default function Home() {
                     <stop offset="50%"  stopColor="#dca898"/>
                     <stop offset="100%" stopColor="#be8070"/>
                   </linearGradient>
-                  {/* bullet — rosa profundo */}
                   <linearGradient id="bulG" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%"   stopColor="#8b3050"/>
                     <stop offset="30%"  stopColor="#c0486a"/>
@@ -193,7 +191,6 @@ export default function Home() {
                     <stop offset="38%"  stopColor="#fff" stopOpacity="0.22"/>
                     <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
                   </linearGradient>
-                  {/* tapa — blanco marfil */}
                   <linearGradient id="capG" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%"   stopColor="#f0e4e0"/>
                     <stop offset="40%"  stopColor="#fdf6f4"/>
@@ -209,71 +206,40 @@ export default function Home() {
                   </filter>
                 </defs>
 
-                {/* ── CUERPO ── */}
                 <g>
                   <rect x="62" y="358" width="96" height="18" rx="9" fill="url(#goldG)"/>
                   <rect x="58" y="190" width="104" height="172" rx="10" fill="url(#bodyG)"/>
                   <rect x="58" y="190" width="104" height="172" rx="10" fill="url(#bodyShine)"/>
                   <rect x="58" y="348" width="104" height="14" rx="4" fill="url(#goldG)"/>
-                  {/* líneas decorativas */}
                   <rect x="74" y="268" width="72" height="1.2" rx="1" fill="#c9907a" opacity="0.4"/>
                   <rect x="82" y="276" width="56" height="0.8" rx="1" fill="#c9907a" opacity="0.22"/>
-                  {/* inicial */}
-                  <text x="110" y="325" textAnchor="middle"
-                    fontFamily="Georgia, serif" fontSize="20" fontStyle="italic"
-                    fill="#b07060" opacity="0.55" letterSpacing="2">G</text>
+                  <text x="110" y="325" textAnchor="middle" fontFamily="Georgia, serif" fontSize="20" fontStyle="italic" fill="#b07060" opacity="0.55" letterSpacing="2">G</text>
                 </g>
 
-                {/* ── COLLAR ── */}
                 <g>
                   <rect x="54" y="178" width="112" height="22" rx="5" fill="url(#goldG)"/>
                   <rect x="58" y="183" width="104" height="12" rx="3" fill="url(#gold2G)"/>
                 </g>
 
-                {/* ── BULLET (sube con scroll) ── */}
-                <g
-                  style={{
-                    transform: `translateY(${bulletTY}px)`,
-                    transition: 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
-                  }}
-                  filter="url(#bulletGlow)"
-                >
+                <g style={{ transform: `translateY(${bulletTY}px)`, transition: 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)' }} filter="url(#bulletGlow)">
                   <rect x="68" y="110" width="84" height="74" fill="url(#bulG)"/>
                   <rect x="68" y="110" width="84" height="74" fill="url(#bulShine)"/>
-                  {/* punta curva */}
                   <path d="M68 110 Q68 62 110 44 Q152 62 152 110 Z" fill="url(#bulG)"/>
                   <path d="M68 110 Q68 62 110 44 Q152 62 152 110 Z" fill="url(#bulShine)"/>
-                  {/* reflejo diagonal */}
                   <path d="M80 98 Q85 70 100 56" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" opacity="0.3"/>
                   <rect x="64" y="176" width="92" height="10" rx="3" fill="url(#goldG)"/>
                 </g>
 
-                {/* ── TAPA (gira con scroll) ── */}
-                <g
-                  style={{
-                    transform: `translate(${capTX}px, ${capTY}px) rotate(${capRotate}deg)`,
-                    transformOrigin: '110px 310px',
-                    transition: 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1)',
-                  }}
-                >
+                <g style={{ transform: `translate(${capTX}px, ${capTY}px) rotate(${capRotate}deg)`, transformOrigin: '110px 310px', transition: 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1)' }}>
                   <rect x="56" y="22" width="108" height="162" rx="14" fill="url(#capG)"/>
                   <rect x="56" y="22" width="108" height="162" rx="14" fill="url(#capShine)"/>
                   <ellipse cx="110" cy="22" rx="54" ry="10" fill="#f0e6e2"/>
-                  {/* anillo inferior tapa */}
                   <rect x="56" y="168" width="108" height="16" rx="4" fill="url(#goldG)"/>
-                  {/* líneas decorativas tapa */}
                   <rect x="72" y="78" width="76" height="1.2" rx="1" fill="#c9907a" opacity="0.3"/>
                   <rect x="80" y="88" width="60" height="0.8" rx="1" fill="#c9907a" opacity="0.15"/>
-                  {/* logo tapa */}
-                  <text x="110" y="138" textAnchor="middle"
-                    fontFamily="Georgia, serif" fontSize="26" fontStyle="italic"
-                    fill="#c9907a" opacity="0.55" letterSpacing="3">G</text>
+                  <text x="110" y="138" textAnchor="middle" fontFamily="Georgia, serif" fontSize="26" fontStyle="italic" fill="#c9907a" opacity="0.55" letterSpacing="3">G</text>
                 </g>
               </svg>
-
-              <div className="particle p1" />
-              <div className="particle p2" />
-              <div className="particle p3" />
             </div>
           </div>
         </section>
@@ -285,61 +251,44 @@ export default function Home() {
       </header>
 
       <main>
-        <div className="marquee-strip">
-          {[...Array(6)].map((_, i) => (
-            <span key={i}>GLOSLIP · EDICIÓN LIMITADA · 2026 · </span>
-          ))}
-        </div>
-
         <section id="catalogo" className="catalogo-section">
           <div className="section-header">
-            <div className="eyebrow-wrap center">
-              <span className="eyebrow-line" />
-              <p className="eyebrow">Colección</p>
-              <span className="eyebrow-line" />
-            </div>
             <h2>Nuestros tonos favoritos</h2>
             <p>Tonos curados con acabados confortables, pensados para destacar sin esfuerzo.</p>
-            <div className="search-wrapper">
+            <br />
+            <div className="form-group">
               <input
                 type="text"
-                placeholder="Buscar labial..."
-                className="search-input"
+                placeholder="Buscar labial por nombre o tipo..."
                 value={busqueda}
                 onChange={manejarBusqueda}
               />
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
             </div>
           </div>
 
           {cargando ? (
-            <p className="loading-text">Cargando la colección...</p>
+            <p className="text-center text-muted">Cargando la colección...</p>
           ) : filtrados.length === 0 ? (
-            <p className="loading-text">No encontramos resultados para "{busqueda}"</p>
+            <p className="text-center text-muted">No encontramos resultados para "{busqueda}"</p>
           ) : (
-            <div className="catalogo-grid">
+            <div className="catalog-grid">
               {filtrados.map((prod, index) => (
                 <article
                   key={prod.id}
-                  className="producto-card"
+                  className="product-card"
                   ref={(el) => (cardsRef.current[index] = el)}
-                  style={{ '--delay': `${index * 0.1}s` }}
                 >
-                  <div className="producto-media">
+                  <div className="product-image">
                     <img src={prod.imagen} alt={`Foto de ${prod.nombre}`} />
-                    <div className="producto-overlay"><span>Ver detalle →</span></div>
                   </div>
-                  <div className="producto-info">
-                    <span className="tag">{prod.tipo}</span>
-                    <h3>{prod.nombre}</h3>
-                    <p className="precio">${prod.precio}</p>
-                    <div className="producto-actions">
+                  <div className="product-info">
+                    <h3 className="product-name">{prod.nombre}</h3>
+                    <p className="product-desc">Tipo: {prod.tipo}</p>
+                    <p className="product-price">${prod.precio}</p>
+                    <div className="product-actions">
                       <a
                         href={`mailto:ventas@gloslip.com?subject=Compra%20${encodeURIComponent(prod.nombre)}`}
-                        className="btn btn-primary"
+                        className="btn btn-ghost"
                       >Comprar</a>
                     </div>
                   </div>
@@ -348,34 +297,19 @@ export default function Home() {
             </div>
           )}
         </section>
-
-        <section className="benefits-section">
-          <div className="benefit">
-            <div className="benefit-icon">✦</div>
-            <h4>Fórmula premium</h4>
-            <p>Ingredientes de origen natural que nutren e hidratan mientras colorean.</p>
-          </div>
-          <div className="benefit">
-            <div className="benefit-icon">◈</div>
-            <h4>Larga duración</h4>
-            <p>Hasta 12 horas de color intenso sin retoques ni tacto graso.</p>
-          </div>
-          <div className="benefit">
-            <div className="benefit-icon">❋</div>
-            <h4>100% vegano</h4>
-            <p>Sin crueldad animal, libre de parabenos y dermatológicamente testeado.</p>
-          </div>
-        </section>
       </main>
 
       <footer>
-        <div className="footer-inner">
-          <div className="brand footer-brand"><span className="brand-g">G</span>loslip</div>
-          <p>© 2026 Gloslip · Todos los derechos reservados</p>
+        <div className="footer-content">
+          <div className="footer-brand">
+            <span className="brand"><span className="brand-g">G</span>loslip</span>
+          </div>
           <div className="footer-links">
             <Link href="/contacto">Contacto</Link>
             <Link href="#">Instagram</Link>
+            <Link href="#">TikTok</Link>
           </div>
+          <p className="footer-copy">© 2026 Gloslip · Todos los derechos reservados</p>
         </div>
       </footer>
     </>
