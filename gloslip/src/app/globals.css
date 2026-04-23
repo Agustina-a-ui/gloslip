@@ -379,3 +379,37 @@ footer {
   .catalog-grid { grid-template-columns: 1fr; }
   .contact-form { padding: 2rem; }
 }
+
+.marquee-wrap {
+  width: 100%;
+  overflow: hidden;
+  background-color: #c9907a; /* Color base (rose/gold de tu paleta) */
+  color: #fff;
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.marquee-track {
+  display: flex;
+  white-space: nowrap;
+  animation: scroll-marquee 25s linear infinite;
+  width: max-content;
+}
+
+.marquee-track span {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  padding-right: 1rem; /* Espacio entre cada repetición de texto */
+  text-transform: uppercase;
+}
+
+/* Animación infinita */
+@keyframes scroll-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } 
+  /* Nota: traslada un 50% porque tenemos el texto lo suficientemente duplicado para que no se note el salto */
+}

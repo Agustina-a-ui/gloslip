@@ -365,3 +365,67 @@ footer {
   .catalog-grid { grid-template-columns: 1fr; }
   .contact-form { padding: 2rem; }
 }
+/* =========================================
+   FIXES GLOBALES (Márgenes y Scroll)
+========================================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Evita que la página se mueva hacia los lados */
+  width: 100%;
+}
+
+/* =========================================
+   FIX: GRILLA DE CATÁLOGO (Evita tarjetas gigantes)
+========================================= */
+.catalog-grid {
+  display: grid;
+  /* El secreto está aquí: auto-fill evita que 1 sola tarjeta se estire */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  justify-content: center;
+}
+
+.product-card {
+  max-width: 350px; /* Ancho máximo por seguridad */
+  margin: 0 auto;   /* Centra la tarjeta si sobra espacio */
+  width: 100%;
+}
+
+/* =========================================
+   MARQUEE (Tira Animada)
+========================================= */
+.marquee-wrap {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background-color: #c9907a; 
+  color: #fff;
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.marquee-track {
+  display: flex;
+  white-space: nowrap;
+  animation: scroll-marquee 20s linear infinite;
+  width: max-content;
+}
+
+.marquee-track span {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  padding-right: 2rem;
+  text-transform: uppercase;
+}
+
+@keyframes scroll-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } 
+}

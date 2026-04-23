@@ -250,6 +250,17 @@ export default function Home() {
         </div>
       </header>
 
+      {/* ── TIRA ANIMADA (MARQUEE) ── */}
+      <div className="marquee-wrap">
+        <div className="marquee-track">
+          {/* Se repite el texto varias veces para que el bucle sea infinito y sin cortes */}
+          <span>✨ 100% VEGANO ✨ CRUELTY FREE ✨ LARGA DURACIÓN ✨ ALTA PIGMENTACIÓN ✨ TONOS EXCLUSIVOS </span>
+          <span>✨ 100% VEGANO ✨ CRUELTY FREE ✨ LARGA DURACIÓN ✨ ALTA PIGMENTACIÓN ✨ TONOS EXCLUSIVOS </span>
+          <span>✨ 100% VEGANO ✨ CRUELTY FREE ✨ LARGA DURACIÓN ✨ ALTA PIGMENTACIÓN ✨ TONOS EXCLUSIVOS </span>
+          <span>✨ 100% VEGANO ✨ CRUELTY FREE ✨ LARGA DURACIÓN ✨ ALTA PIGMENTACIÓN ✨ TONOS EXCLUSIVOS </span>
+        </div>
+      </div>
+
       <main>
         <section id="catalogo" className="catalogo-section">
           <div className="section-header">
