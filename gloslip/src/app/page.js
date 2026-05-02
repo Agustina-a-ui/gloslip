@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useCart } from "./context/CartContext";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -12,6 +13,9 @@ export default function Home() {
   const heroWrapperRef = useRef(null);
   const [scrollVal, setScrollVal] = useState(0);
   const [openVal, setOpenVal] = useState(0);
+
+  // ¡ACÁ ESTÁ LA MAGIA QUE FALTABA! Traemos totalItems del contexto:
+  const { totalItems } = useCart();
 
   // 1. CARGA DE PRODUCTOS
   useEffect(() => {
@@ -115,30 +119,7 @@ export default function Home() {
     <>
       <div className="noise-overlay" />
 
-      {/* HEADER STICKY */}
-      <div className="nav-wrap sticky-nav">
-        <div className="nav-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-          
-          <div className="brand"><span className="brand-g">G</span>loslip</div>
-          
-          <nav className="header-nav">
-            <Link href="/#inicio">Inicio</Link>
-            <Link href="/catalogo">Catálogo</Link> {/* <-- BIEN: Sin el # */}
-            <Link href="/contacto">Contacto</Link>
-          </nav>
-
-          <div className="header-search-right">
-            <input
-              type="text"
-              placeholder="🔍 Buscar tono..."
-              value={busqueda}
-              onChange={manejarBusqueda}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* RENDERIZADO CONDICIONAL: Solo mostramos esto si NO está buscando */}
+      {/* RENDERIZADO CONDICIONAL del Hero */}
       {!estaBuscando && (
         <>
           <header className="site-header" id="inicio">
@@ -160,7 +141,6 @@ export default function Home() {
                   <Link href="/catalogo" className="btn btn-primary">
                     Descubrir colección
                   </Link>
-                  {/* ... */}
                 </div>
                 <div className="hero-stats">
                   <div className="stat">
@@ -292,8 +272,8 @@ export default function Home() {
         </>
       )}
 
-      {/* Al main le agregamos un margen arriba si está buscando, para que el header no lo tape */}
-      <main style={{ paddingTop: estaBuscando ? '120px' : '0', minHeight: estaBuscando ? '100vh' : 'auto' }}>
+      {/* MAIN CONTENT - Ahora sin el padding extra feo */}
+      <main style={{ minHeight: estaBuscando ? '100vh' : 'auto' }}>
         <section id="catalogo" className="catalogo-section">
           
           <div className="section-header">
@@ -308,16 +288,35 @@ export default function Home() {
                 <p>Encontramos {filtrados.length} {filtrados.length === 1 ? 'tono' : 'tonos'} para "{busqueda}"</p>
               </>
             )}
+            
+            {/* EL BUSCADOR AHORA VIVE ACÁ, DEBAJO DEL TÍTULO */}
+            <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center' }}>
+              <input
+                type="text"
+                placeholder="Buscar producto..."
+                value={busqueda}
+                onChange={manejarBusqueda}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '30px',
+                  border: '1px solid #ddd',
+                  width: '100%',
+                  maxWidth: '400px',
+                  fontSize: '1rem',
+                  outline: 'none',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
+                }}
+              />
+            </div>
           </div>
 
           {cargando ? (
             <p className="text-center text-muted">Cargando la colección...</p>
           ) : filtrados.length === 0 ? (
-            <p className="text-center text-muted">No encontramos resultados. ¡Prueba buscando otro tono!</p>
+            <p className="text-center text-muted" style={{ marginTop: '2rem' }}>No encontramos resultados. ¡Prueba buscando otro tono!</p>
           ) : (
             <>
-              <div className="catalog-grid">
-                {/* LA MAGIA SUCEDE ACÁ: Si busca, muestra filtrados. Si no, corta los primeros 3 */}
+              <div className="catalog-grid" style={{ marginTop: '3rem' }}>
                 {(estaBuscando ? filtrados : productos.slice(0, 3)).map((prod, index) => (
                   <article
                     key={prod.id}
@@ -341,9 +340,8 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* BOTÓN PARA IR AL CATÁLOGO COMPLETO (Solo aparece si NO está buscando) */}
               {!estaBuscando && (
-                <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                <div style={{ textAlign: 'center', marginTop: '4rem' }}>
                   <Link href="/catalogo" className="btn btn-primary" style={{ padding: '1rem 3rem' }}>
                     Ver catálogo completo
                   </Link>
@@ -354,7 +352,6 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Solo mostramos el footer si NO está buscando */}
       {!estaBuscando && (
         <footer>
           <div className="footer-content">

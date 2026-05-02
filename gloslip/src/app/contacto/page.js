@@ -5,19 +5,6 @@ import Link from "next/link";
 export default function Contacto() {
   return (
     <>
-      {/* HEADER SIMPLE PARA CONTACTO */}
-      <div className="nav-wrap sticky-nav">
-        <div className="nav-inner">
-          <Link href="/" className="brand">
-            <span className="brand-g">G</span>loslip
-          </Link>
-          <nav>
-            <Link href="/">Inicio</Link>
-            <Link href="/#catalogo">Catálogo</Link>
-          </nav>
-        </div>
-      </div>
-
       <main style={styles.main}>
         <div style={styles.container}>
           <h1 style={styles.title}>Hablemos</h1>
