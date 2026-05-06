@@ -111,7 +111,7 @@ function CatalogoContenido() {
     <main style={{ padding: '100px 20px 60px', maxWidth: '1200px', margin: '0 auto', backgroundColor: '#fffdfc', minHeight: '100vh' }}>
       
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: '#8b3050', fontSize: '2.5rem', marginBottom: '10px' }}>
+        <h1 style={{ color: '#8b3050', fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', marginBottom: '10px' }}>
           {query ? `Resultados para "${query}"` : "Catálogo de Tonos"}
         </h1>
       </div>
