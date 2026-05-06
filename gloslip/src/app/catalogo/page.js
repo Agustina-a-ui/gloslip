@@ -70,7 +70,7 @@ function TarjetaProducto({ producto }) {
           
           <button onClick={() => {
               agregarAlCarrito(producto, cantidad);
-              alert(`¡Agregaste ${cantidad} ${producto.nombre} al carrito! 💄`);
+              alert(`¡Agregaste ${cantidad} ${producto.nombre} al carrito!`);
               setCantidad(1);
             }}
             style={{ 
