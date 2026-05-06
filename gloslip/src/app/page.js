@@ -285,7 +285,7 @@ export default function Home() {
             ) : (
               <>
                 <h2>Resultados de búsqueda</h2>
-                <p>Encontramos {filtrados.length} {filtrados.length === 1 ? 'tono' : 'tonos'} para "{busqueda}"</p>
+                <p>Encontramos {filtrados.length} {filtrados.length === 1 ? 'tono' : 'tonos'} para  &quot;{busqueda}&quot;</p>
               </>
             )}
             
