@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useCart } from "../context/CartContext";
 import { useSearchParams } from "next/navigation"; 
 
@@ -87,7 +87,7 @@ function TarjetaProducto({ producto }) {
   );
 }
 
-export default function Catalogo() {
+function CatalogoContenido() {
   const [categoria, setCategoria] = useState('todos'); 
   const [colorFiltro, setColorFiltro] = useState('todos'); 
   const [orden, setOrden] = useState('defecto'); 
@@ -129,7 +129,6 @@ export default function Catalogo() {
             {['todos', 'labial', 'gloss'].map((cat) => (
               <button 
                 key={cat}
-                // ACÁ ESTÁ LA MAGIA PARA LAS CATEGORÍAS: Si lo tocás de nuevo, vuelve a "todos"
                 onClick={() => setCategoria(categoria === cat && cat !== 'todos' ? 'todos' : cat)}
                 style={{
                   padding: '8px 20px',
@@ -178,25 +177,15 @@ export default function Catalogo() {
             {paletaFiltros.map((color) => (
               <div 
                 key={color.id}
-                // Y ACÁ ESTÁ LA MAGIA PARA LOS COLORES: Si lo tocás de nuevo, se deselecciona
                 onClick={() => setColorFiltro(colorFiltro === color.id && color.id !== 'todos' ? 'todos' : color.id)}
                 title={color.label}
                 style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  background: color.bg,
-                  cursor: 'pointer',
-                  position: 'relative',
+                  width: '32px', height: '32px', borderRadius: '50%',
+                  background: color.bg, cursor: 'pointer', position: 'relative',
                   border: colorFiltro === color.id ? '3px solid #fff' : '2px solid transparent',
-                  boxShadow: colorFiltro === color.id 
-                    ? '0 0 0 2px #8b3050, 0 4px 8px rgba(0,0,0,0.1)' 
-                    : '0 2px 5px rgba(0,0,0,0.1)',
+                  boxShadow: colorFiltro === color.id ? '0 0 0 2px #8b3050, 0 4px 8px rgba(0,0,0,0.1)' : '0 2px 5px rgba(0,0,0,0.1)',
                   transform: colorFiltro === color.id ? 'scale(1.1)' : 'scale(1)',
-                  transition: 'all 0.2s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
+                  transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}
               >
                 {colorFiltro === color.id && color.id !== 'todos' && (
@@ -222,5 +211,13 @@ export default function Catalogo() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function Catalogo() {
+  return (
+    <Suspense>
+      <CatalogoContenido />
+    </Suspense>
   );
 }
