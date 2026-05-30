@@ -19,10 +19,14 @@ export default function Ordenes() {
         return;
       }
 
-      const res = await fetch('/api/ordenes');
-      const data = await res.json();
-      setOrdenes(data || []);
-      setCargando(false);
+      const { data, error } = await supabase
+        .from('ordenes')
+        .select('*')
+        .eq('usuario_id', user.id)
+        .order('creado_en', { ascending: false });
+
+    if (!error) setOrdenes(data || []);
+    setCargando(false);
     };
     obtenerOrdenes();
   }, []);
