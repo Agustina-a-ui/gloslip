@@ -811,3 +811,96 @@ footer {
   }
   h1 { font-size: 1.7rem; }
 }
+/* ── DETALLE PRODUCTO MOBILE ── */
+@media (max-width: 768px) {
+  .detail-main {
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  .detail-container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .back-link {
+    position: fixed;
+    top: 70px;
+    left: 16px;
+    z-index: 10;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(8px);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .detail-image-box {
+    border-radius: 0;
+    height: 52vh;
+    box-shadow: none;
+    background: #ffeef2;
+  }
+
+  .detail-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .detail-info {
+    padding: 24px 20px 40px;
+    background: #fff;
+    border-radius: 24px 24px 0 0;
+    margin-top: -24px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+  }
+
+  .detail-type {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .detail-name {
+    font-size: 1.9rem;
+    margin-bottom: 8px;
+    line-height: 1.1;
+  }
+
+  .detail-price {
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+  }
+
+  .detail-description p {
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    color: #888;
+  }
+
+  .detail-benefits {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    background: #fafafa;
+    border-radius: 12px;
+  }
+
+  .detail-benefits span {
+    font-size: 0.85rem;
+  }
+
+  .add-to-cart-btn {
+    border-radius: 16px;
+    font-size: 0.85rem;
+    padding: 1rem;
+  }
+}
