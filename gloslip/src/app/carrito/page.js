@@ -50,9 +50,9 @@ export default function CarritoPage() {
             <div style={{ marginTop: '3rem', padding: '2rem', background: '#fcfcfc', borderRadius: '15px', border: '1px solid #eee', textAlign: 'right' }}>
               <p style={{ fontSize: '1.1rem', color: '#666' }}>Subtotal ({totalItems} productos)</p>
               <h2 style={{ fontSize: '2rem', margin: '0.5rem 0 2rem 0' }}>Total: ${totalPrecio}</h2>
-              <button className="btn btn-primary" style={{ width: '100%', maxWidth: '300px', padding: '1.2rem' }}>
+              <Link href="/checkout" className="btn btn-primary" style={{ width: '100%', maxWidth: '300px', padding: '1.2rem', textAlign: 'center' }}>
                 Finalizar Compra
-              </button>
+              </Link>
             </div>
           </div>
         )}
