@@ -1012,16 +1012,16 @@ footer {
 
   .nav-inner {
     flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     padding: 0 1.2rem;
   }
 
   .brand {
     font-size: 1.4rem;
   }
-
-  .mobile-menu-overlay {
-    top: 0;
-  }
+}
 
   /* ── TARJETAS CATÁLOGO MOBILE ── */
   .catalog-grid {
