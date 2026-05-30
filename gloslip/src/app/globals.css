@@ -360,7 +360,7 @@ footer {
   width: 100vw; margin-left: calc(-50vw + 50%);
   border-top: 1px solid rgba(201, 144, 122, 0.3);
   border-bottom: 1px solid rgba(201, 144, 122, 0.3);
-  background-color: transparent; color: #811160;
+  background-color: transparent; color: #e55a8b;
   padding: 1rem 0; display: flex; align-items: center; overflow: hidden;
 }
 .marquee-track {
