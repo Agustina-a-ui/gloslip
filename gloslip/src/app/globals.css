@@ -1044,4 +1044,82 @@ footer {
   .product-info {
     padding: 0.7rem;
   }
+/* ── HERO MOBILE MEJORADO ── */
+@media (max-width: 768px) {
 
+  /* Navbar más compacto */
+  .sticky-nav {
+    padding: 0.8rem 0;
+  }
+
+  .brand {
+    font-size: 1.6rem;
+  }
+
+  /* Hero con labial al lado del texto */
+  header.site-header {
+    padding: 70px 0 0;
+    background: linear-gradient(135deg, #fff 60%, #ffeef2 100%);
+  }
+
+  .hero {
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    align-items: center;
+    padding: 1.5rem 1.2rem;
+    min-height: 380px;
+  }
+
+  .hero-copy {
+    order: 1;
+    text-align: left;
+    padding: 0;
+  }
+
+  .hero-visual {
+    order: 2;
+    min-height: 260px;
+    display: flex !important;
+  }
+
+  .lipstick-svg {
+    width: 130px !important;
+    height: 240px !important;
+  }
+
+  .eyebrow-wrap {
+    justify-content: flex-start;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .hero-desc {
+    font-size: 0.85rem;
+    max-width: 100%;
+  }
+
+  .hero-actions {
+    justify-content: flex-start;
+  }
+
+  .hero-stats {
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+
+  .stat-num {
+    font-size: 1.6rem;
+  }
+
+  /* Marquee más chico */
+  .marquee-track span {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+  }
+
+  .marquee-wrap {
+    padding: 0.6rem 0;
+  }
+}
