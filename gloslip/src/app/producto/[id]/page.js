@@ -7,10 +7,10 @@ import { useCart } from "../../context/CartContext";
 
 const listaProductos = [
   { id: 1, nombre: "Velvet Mate Cherry", tipo: "labial", precio: 15000, imagen: "/labial-pa.jpg", desc: "Un rojo cereza intenso con acabado mate aterciopelado..." },
-  { id: 2, nombre: "Gloss Crystal Clear", tipo: "gloss", precio: 12000, imagen: "/labial-cherry.png", desc: "Brillo de alto impacto sin sensación pegajosa..." },
-  { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, imagen: "/labial-cerrado.jpg", desc: "El tono nude ideal para el día a día..." },
-  { id: 4, nombre: "Berry Bomb Gloss", tipo: "gloss", precio: 13000, imagen: "/labial-pa.jpg", desc: "Un toque de color frambuesa con un brillo espectacular..." },
-  { id: 5, nombre: "Rose Gold Shimmer", tipo: "labial", precio: 15500, imagen: "/labial-cherry.png", desc: "Labial cremoso con destellos dorados súper sutiles..." }
+  { id: 2, nombre: "Gloss Crystal Clear", tipo: "gloss", precio: 12000, imagen: "/nude-chic-mate.jpeg", desc: "Brillo de alto impacto sin sensación pegajosa..." },
+  { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, imagen: "/nude-chic-mate.jpeg", desc: "El tono nude ideal para el día a día..." },
+  { id: 4, nombre: "Berry Bomb Gloss", tipo: "gloss", precio: 13000, imagen: "/berry-bomb-gloss.jpeg", desc: "Un toque de color frambuesa con un brillo espectacular..." },
+  { id: 5, nombre: "Rose Gold Shimmer", tipo: "labial", precio: 15500, imagen: "/rose-gold-shimmer.jpeg", desc: "Labial cremoso con destellos dorados súper sutiles..." }
 ];
 
 export default function ProductoDetalle() {

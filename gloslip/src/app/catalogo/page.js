@@ -7,10 +7,10 @@ import { useSearchParams } from "next/navigation";
 
 const listaProductos = [
   { id: 1, nombre: "Velvet Mate Cherry", tipo: "labial", precio: 15000, colorHex: "#8b0000", familiaColor: "rojo", imagen: "/labial-pa.jpg", desc: "Un rojo cereza intenso..." },
-  { id: 2, nombre: "Gloss Crystal Clear", tipo: "gloss", precio: 12000, colorHex: "#fce4ec", familiaColor: "transparente", imagen: "/labial-cherry.png", desc: "Brillo sin sensación pegajosa..." },
-  { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, colorHex: "#d2a68d", familiaColor: "nude", imagen: "/labial-cerrado.jpg", desc: "El tono nude ideal..." },
-  { id: 4, nombre: "Berry Bomb Gloss", tipo: "gloss", precio: 13000, colorHex: "#8e3159", familiaColor: "rojo", imagen: "/labial-pa.jpg", desc: "Color frambuesa con brillo..." },
-  { id: 5, nombre: "Rose Gold Shimmer", tipo: "labial", precio: 15500, colorHex: "#b76e79", familiaColor: "rosa", imagen: "/labial-cherry.png", desc: "Destellos dorados..." }
+  { id: 2, nombre: "Gloss Crystal Clear", tipo: "gloss", precio: 12000, colorHex: "#fce4ec", familiaColor: "transparente", imagen: "/gloss-crystal-clear.jpeg", desc: "Brillo sin sensación pegajosa..." },
+  { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, colorHex: "#d2a68d", familiaColor: "nude", imagen: "/nude-chic-mate.jpeg", desc: "El tono nude ideal..." },
+  { id: 4, nombre: "Berry Bomb Gloss", tipo: "gloss", precio: 13000, colorHex: "#8e3159", familiaColor: "rojo", imagen: "/berry-bomb-gloss.jpeg", desc: "Color frambuesa con brillo..." },
+  { id: 5, nombre: "Rose Gold Shimmer", tipo: "labial", precio: 15500, colorHex: "#b76e79", familiaColor: "rosa", imagen: "/rose-gold-shimmer.jpeg", desc: "Destellos dorados..." }
 ];
 
 const paletaFiltros = [
