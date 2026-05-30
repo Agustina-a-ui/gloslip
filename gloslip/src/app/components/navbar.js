@@ -79,6 +79,9 @@ export default function Navbar() {
             {usuario ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <span style={{ fontSize: '0.8rem', color: '#666' }}>Hola, {usuario.user_metadata?.nombre || usuario.email.split('@')[0]}</span>
+                <Link href="/ordenes" style={{ fontSize: '0.75rem', color: '#666', textDecoration: 'none', fontWeight: '500' }}>
+                  Mis órdenes
+                </Link>
                 <button onClick={handleLogout} style={{ fontSize: '0.75rem', color: '#e55a8b', background: 'none', border: '1px solid #e55a8b', borderRadius: '20px', padding: '4px 12px', cursor: 'pointer', fontWeight: '500' }}>
                   Salir
                 </button>
@@ -225,6 +228,11 @@ export default function Navbar() {
                     {usuario.user_metadata?.nombre || usuario.email.split('@')[0]}
                   </span>
                 </div>
+                <Link href="/ordenes" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
+                  <span className="mobile-menu-icon">📦</span>
+                  <span className="mobile-menu-label">Mis órdenes</span>
+                  <span className="mobile-menu-arrow">›</span>
+                </Link>
                 <button onClick={handleLogout} className="mobile-menu-link" style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
                   <span className="mobile-menu-icon">🚪</span>
                   <span className="mobile-menu-label" style={{ color: '#e55a8b' }}>Cerrar sesión</span>
