@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useCart } from "./context/CartContext";
+import { supabase } from "../lib/supabase";
 
 export default function Home() {
   const [productos, setProductos] = useState([]);
@@ -14,25 +15,20 @@ export default function Home() {
   const [scrollVal, setScrollVal] = useState(0);
   const [openVal, setOpenVal] = useState(0);
 
-  // ¡ACÁ ESTÁ LA MAGIA QUE FALTABA! Traemos totalItems del contexto:
   const { totalItems } = useCart();
 
-  // 1. CARGA DE PRODUCTOS
+  // 1. CARGA DE PRODUCTOS DESDE SUPABASE
   useEffect(() => {
     const obtenerProductos = async () => {
       try {
-        const datos = [
-          { id: 1, nombre: "Velvet Mate Cherry", tipo: "labial", precio: 15000, imagen: "/labial-pa.jpg" },
-          { id: 2, nombre: "Gloss Crystal Clear", tipo: "gloss", precio: 12000, imagen: "/gloss-crystal-clear.jpeg" },
-          { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, imagen:  "/nude-chic-mate.jpeg" },
-          { id: 4, nombre: "Berry Bomb Gloss", tipo: "gloss", precio: 13000, imagen: "/berry-bomb-gloss.jpeg" },
-          { id: 5, nombre: "Rose Gold Shimmer", tipo: "labial", precio: 15500, imagen: "/rose-gold-shimmer.jpeg" }
-        ];
+        const { data, error } = await supabase.from('productos').select('*');
+        if (error) throw error;
+        const datos = data.map(p => ({ ...p, imagen: p.imagen_url }));
         setProductos(datos);
         setFiltrados(datos);
-        setCargando(false);
       } catch (error) {
         console.error("Error al cargar los labiales:", error);
+      } finally {
         setCargando(false);
       }
     };
@@ -46,7 +42,7 @@ export default function Home() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-            observer.unobserve(entry.target); 
+            observer.unobserve(entry.target);
           }
         });
       },
@@ -54,17 +50,17 @@ export default function Home() {
     );
 
     const timer = setTimeout(() => {
-      cardsRef.current.forEach((card) => { 
+      cardsRef.current.forEach((card) => {
         if (card) {
           const rect = card.getBoundingClientRect();
           if (rect.top < window.innerHeight) {
             card.classList.add('visible');
           } else {
-            observer.observe(card); 
+            observer.observe(card);
           }
         }
       });
-    }, 150); 
+    }, 150);
 
     return () => {
       clearTimeout(timer);
@@ -112,14 +108,12 @@ export default function Home() {
   const capTX     = capMotion * 40;
   const capTY     = capMotion * -25;
 
-  // Variable para saber si el usuario está buscando algo
   const estaBuscando = busqueda.trim() !== '';
 
   return (
     <>
       <div className="noise-overlay" />
 
-      {/* RENDERIZADO CONDICIONAL del Hero */}
       {!estaBuscando && (
         <>
           <header className="site-header" id="inicio">
@@ -172,7 +166,7 @@ export default function Home() {
                     viewBox="0 0 220 420"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    style={{ overflow: 'visible' }} 
+                    style={{ overflow: 'visible' }}
                   >
                     <defs>
                       <linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="0">
@@ -272,10 +266,9 @@ export default function Home() {
         </>
       )}
 
-      {/* MAIN CONTENT - Ahora sin el padding extra feo */}
       <main style={{ minHeight: estaBuscando ? '100vh' : 'auto' }}>
         <section id="catalogo" className="catalogo-section">
-          
+
           <div className="section-header">
             {!estaBuscando ? (
               <>
@@ -285,11 +278,10 @@ export default function Home() {
             ) : (
               <>
                 <h2>Resultados de búsqueda</h2>
-                <p>Encontramos {filtrados.length} {filtrados.length === 1 ? 'tono' : 'tonos'} para  &quot;{busqueda}&quot;</p>
+                <p>Encontramos {filtrados.length} {filtrados.length === 1 ? 'tono' : 'tonos'} para &quot;{busqueda}&quot;</p>
               </>
             )}
-            
-            {/* EL BUSCADOR AHORA VIVE ACÁ, DEBAJO DEL TÍTULO */}
+
             <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center' }}>
               <input
                 type="text"
@@ -297,13 +289,9 @@ export default function Home() {
                 value={busqueda}
                 onChange={manejarBusqueda}
                 style={{
-                  padding: '12px 24px',
-                  borderRadius: '30px',
-                  border: '1px solid #ddd',
-                  width: '100%',
-                  maxWidth: '400px',
-                  fontSize: '1rem',
-                  outline: 'none',
+                  padding: '12px 24px', borderRadius: '30px',
+                  border: '1px solid #ddd', width: '100%', maxWidth: '400px',
+                  fontSize: '1rem', outline: 'none',
                   boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
                 }}
               />
@@ -321,12 +309,10 @@ export default function Home() {
                   <article
                     key={prod.id}
                     className="product-card"
-                    ref={(el) => {
-                      if (el) cardsRef.current[index] = el;
-                    }}
+                    ref={(el) => { if (el) cardsRef.current[index] = el; }}
                   >
                     <div className="product-image">
-                      <img src={prod.imagen} alt={`Foto de ${prod.nombre}`} />
+                      <img src={prod.imagen_url} alt={`Foto de ${prod.nombre}`} />
                       <Link href={`/producto/${prod.id}`} className="hover-overlay">
                         <span className="ver-detalle-btn">Ver detalle</span>
                       </Link>
@@ -334,7 +320,7 @@ export default function Home() {
                     <div className="product-info">
                       <h3 className="product-name">{prod.nombre}</h3>
                       <p className="product-desc">Tipo: {prod.tipo}</p>
-                      <p className="product-price">${prod.precio}</p>
+                      <p className="product-price">${prod.precio.toLocaleString()}</p>
                     </div>
                   </article>
                 ))}
