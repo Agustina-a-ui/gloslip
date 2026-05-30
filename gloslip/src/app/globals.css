@@ -654,49 +654,353 @@ footer {
   color: #8b3050;
 }
 /* =========================================
-   AJUSTES FINALES PARA CELULARES (MÓVIL)
-========================================= */
+   MOBILE — agregar al final de globals.css
+   ========================================= */
 
+/* Ocultar elementos de desktop en mobile */
 @media (max-width: 768px) {
-  /* 1. Navegación y Buscador: Evita que los enlaces y el buscador se aplasten horizontalmente */
-  .header-nav {
-    flex-direction: column;
-    gap: 1rem;
+
+  /* Esconde nav de links, buscador y carrito hover de desktop */
+  .header-nav,
+  .header-right-side {
+    display: none !important;
+  }
+
+  /* Muestra los botones mobile */
+  .mobile-nav-right {
+    display: flex;
     align-items: center;
-    width: 100%;
+    gap: 14px;
   }
-  .header-search-right {
+
+  /* --- CARRITO MOBILE --- */
+  .mobile-cart-btn {
+    position: relative;
+    font-size: 1.4rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+  }
+
+  .mobile-cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: #ff6b9d;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    width: 100%;
-    margin-top: 1rem;
   }
-  
-  /* 2. Botones del inicio (Hero): Permite que pasen a la línea de abajo si no caben */
+
+  /* --- HAMBURGUESA --- */
+  .hamburger-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-end;
+  }
+
+  .ham-bar {
+    display: block;
+    height: 1.5px;
+    background: #1a1a1a;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    width: 22px;
+  }
+
+  /* Animación X al abrir */
+  .hamburger-btn.is-open .ham-bar:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .hamburger-btn.is-open .ham-bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  .hamburger-btn.is-open .ham-bar:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  /* --- OVERLAY DEL MENÚ --- */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    background: #fff;
+    z-index: 998;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.1);
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .mobile-menu-overlay.mobile-menu-open {
+    right: 0;
+  }
+
+  .mobile-menu-inner {
+    display: flex;
+    flex-direction: column;
+    padding: 80px 0 32px;
+    height: 100%;
+  }
+
+  /* Buscador dentro del menú */
+  .mobile-menu-search {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    margin-bottom: 8px;
+  }
+
+  .mobile-menu-search input {
+    width: 100%;
+    padding: 11px 16px;
+    border: 1px solid #ebebeb;
+    border-radius: 30px;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    color: #1a1a1a;
+    outline: none;
+    background: #fafafa;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .mobile-menu-search input::placeholder {
+    color: #bbb;
+  }
+
+  /* Links del menú */
+  .mobile-menu-nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 8px;
+  }
+
+  .mobile-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: background 0.2s ease;
+    border-radius: 8px;
+  }
+
+  .mobile-menu-link:active {
+    background: #ffeef2;
+  }
+
+  .mobile-menu-icon {
+    width: 36px;
+    height: 36px;
+    background: #ffeef2;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .mobile-menu-label {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    letter-spacing: 0.01em;
+  }
+
+  .mobile-menu-arrow {
+    color: #ccc;
+    font-size: 1.3rem;
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  .mobile-menu-badge {
+    background: #ff6b9d;
+    color: #fff;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+  }
+
+  /* Redes sociales al pie del menú */
+  .mobile-menu-social {
+    padding: 24px 24px 8px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    display: flex;
+    gap: 20px;
+  }
+
+  .mobile-menu-social a {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  /* Fondo oscuro detrás del menú */
+  .mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 997;
+    backdrop-filter: blur(2px);
+  }
+
+  /* --- HERO MOBILE --- */
+  header.site-header {
+    padding: 80px 1.2rem 3rem;
+    min-height: auto;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 0;
+    min-height: auto;
+    padding: 0;
+    text-align: center;
+  }
+
+  .hero-copy {
+    padding: 1rem 0 0;
+    order: 2;
+  }
+
+  .hero-visual {
+    order: 1;
+    min-height: 280px;
+  }
+
+  .hero-visual .lipstick-svg {
+    width: 160px;
+    height: 280px;
+  }
+
+  .eyebrow-wrap {
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: clamp(2.4rem, 10vw, 3.2rem);
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .hero-actions {
-    flex-wrap: wrap;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
   }
-  
-  /* 3. Textos de la página de detalle: Achicamos el título para que no ocupe media pantalla */
-  .detail-name {
-    font-size: 2rem;
+
+  .hero-stats {
+    justify-content: center;
+    gap: 1.2rem;
   }
-  .detail-price {
-    font-size: 1.5rem;
+
+  .scroll-hint {
+    display: none;
+  }
+
+  /* --- CATÁLOGO MOBILE --- */
+  .catalogo-section {
+    padding: 3rem 1.2rem 3rem;
+  }
+
+  .catalog-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .product-card {
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .product-name {
+    font-size: 1rem;
+  }
+
+  .product-price {
+    font-size: 1.1rem;
+  }
+
+  .product-info {
+    padding: 1rem;
+  }
+
+  /* --- SECCIÓN HEADER mobile --- */
+  .section-header h2 {
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+  }
+
+  /* --- MARQUEE --- */
+  .marquee-wrap {
+    padding: 0.8rem 0;
+  }
+
+  /* --- FOOTER MOBILE --- */
+  footer {
+    padding: 2rem 1.2rem 1.5rem;
+  }
+
+  .footer-links {
+    gap: 1.2rem;
   }
 }
 
-@media (max-width: 480px) {
-  /* 4. Corrección de H2: En tu código original, en celulares muy pequeños el H2 crecía a 2.8rem. Lo ajustamos a un tamaño más prolijo. */
-  .section-header h2 { 
-    font-size: 1.8rem; 
+/* Pantallas muy chicas */
+@media (max-width: 380px) {
+  .catalog-grid {
+    grid-template-columns: 1fr;
   }
-  
-  /* 5. Tarjetas (Compra y Contacto): Reducimos el espacio interior (padding) para darle más lugar al texto */
-  .purchase-card {
-    padding: 1.5rem;
+
+  .product-card {
+    max-width: 280px;
+    margin: 0 auto;
   }
-  .contact-form {
-    padding: 1.5rem;
+
+  h1 {
+    font-size: 2.2rem;
+  }
+}
+
+/* En desktop, ocultar los elementos mobile */
+@media (min-width: 769px) {
+  .mobile-nav-right {
+    display: none;
+  }
+
+  .mobile-menu-overlay,
+  .mobile-menu-backdrop {
+    display: none !important;
   }
 }
