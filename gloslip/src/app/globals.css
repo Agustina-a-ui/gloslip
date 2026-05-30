@@ -1004,3 +1004,44 @@ footer {
     display: none !important;
   }
 }
+/* ── AJUSTES NAVBAR MOBILE ── */
+@media (max-width: 768px) {
+  .sticky-nav {
+    padding: 0.5rem 0;
+  }
+
+  .nav-inner {
+    flex-wrap: nowrap;
+    padding: 0 1.2rem;
+  }
+
+  .brand {
+    font-size: 1.4rem;
+  }
+
+  .mobile-menu-overlay {
+    top: 0;
+  }
+
+  /* ── TARJETAS CATÁLOGO MOBILE ── */
+  .catalog-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+
+  .product-image {
+    aspect-ratio: 1;
+  }
+
+  .product-name {
+    font-size: 0.85rem;
+  }
+
+  .product-price {
+    font-size: 1rem;
+  }
+
+  .product-info {
+    padding: 0.7rem;
+  }
+}
