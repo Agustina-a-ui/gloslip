@@ -1,20 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
 
 export default function Navbar() {
   const { carrito } = useCart();
   const [isHovered, setIsHovered] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [usuario, setUsuario] = useState(null);
 
   const router = useRouter();
   const [busqueda, setBusqueda] = useState('');
 
   const cantidadTotal = carrito.reduce((acc, item) => acc + item.cantidad, 0);
   const subtotal = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+
+  useEffect(() => {
+    const obtenerUsuario = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUsuario(user);
+    };
+    obtenerUsuario();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUsuario(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUsuario(null);
+    setMenuAbierto(false);
+    router.push('/');
+  };
 
   const manejarBusqueda = (e) => {
     const valor = e.target.value;
@@ -51,6 +74,25 @@ export default function Navbar() {
                 onChange={manejarBusqueda}
               />
             </div>
+
+            {/* LOGIN / USUARIO DESKTOP */}
+            {usuario ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '0.8rem', color: '#666' }}>Hola, {usuario.user_metadata?.nombre || usuario.email.split('@')[0]}</span>
+                <button onClick={handleLogout} style={{ fontSize: '0.75rem', color: '#e55a8b', background: 'none', border: '1px solid #e55a8b', borderRadius: '20px', padding: '4px 12px', cursor: 'pointer', fontWeight: '500' }}>
+                  Salir
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Link href="/auth/login" style={{ fontSize: '0.75rem', color: '#666', border: '1px solid #ebebeb', borderRadius: '20px', padding: '6px 14px', fontWeight: '500', textDecoration: 'none' }}>
+                  Ingresar
+                </Link>
+                <Link href="/auth/registro" style={{ fontSize: '0.75rem', color: '#fff', background: '#ff6b9d', borderRadius: '20px', padding: '6px 14px', fontWeight: '500', textDecoration: 'none' }}>
+                  Registrarse
+                </Link>
+              </div>
+            )}
 
             <div
               className="cart-container-hover"
@@ -116,7 +158,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* BOTONES MOBILE: carrito + hamburguesa */}
+          {/* BOTONES MOBILE */}
           <div className="mobile-nav-right">
             <Link href="/carrito" className="mobile-cart-btn">
               <span>🛒</span>
@@ -174,6 +216,34 @@ export default function Navbar() {
               <span className="mobile-menu-label">Contacto</span>
               <span className="mobile-menu-arrow">›</span>
             </Link>
+
+            {usuario ? (
+              <>
+                <div className="mobile-menu-link" style={{ cursor: 'default' }}>
+                  <span className="mobile-menu-icon">👤</span>
+                  <span className="mobile-menu-label" style={{ fontSize: '0.9rem', color: '#999' }}>
+                    {usuario.user_metadata?.nombre || usuario.email.split('@')[0]}
+                  </span>
+                </div>
+                <button onClick={handleLogout} className="mobile-menu-link" style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
+                  <span className="mobile-menu-icon">🚪</span>
+                  <span className="mobile-menu-label" style={{ color: '#e55a8b' }}>Cerrar sesión</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
+                  <span className="mobile-menu-icon">🔑</span>
+                  <span className="mobile-menu-label">Ingresar</span>
+                  <span className="mobile-menu-arrow">›</span>
+                </Link>
+                <Link href="/auth/registro" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
+                  <span className="mobile-menu-icon">✨</span>
+                  <span className="mobile-menu-label">Registrarse</span>
+                  <span className="mobile-menu-arrow">›</span>
+                </Link>
+              </>
+            )}
           </nav>
 
           <div className="mobile-menu-social">
@@ -183,12 +253,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* FONDO OSCURO al abrir menú */}
       {menuAbierto && (
-        <div
-          className="mobile-menu-backdrop"
-          onClick={() => setMenuAbierto(false)}
-        />
+        <div className="mobile-menu-backdrop" onClick={() => setMenuAbierto(false)} />
       )}
     </>
   );
