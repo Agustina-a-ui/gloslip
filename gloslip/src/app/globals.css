@@ -569,7 +569,7 @@ footer {
   }
   .detail-grid { display: flex !important; flex-direction: column !important; gap: 0 !important; }
   .detail-image-box {
-    border-radius: 0 !important; height: 55vw !important;
+    border-radius: 0 !important; height: 45vh !important;
     box-shadow: none !important; background: #ffeef2 !important;
     overflow: hidden !important; width: 100% !important;
   }
