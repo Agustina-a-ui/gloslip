@@ -23,10 +23,10 @@ export default function Home() {
       try {
         const datos = [
           { id: 1, nombre: "Velvet Mate Cherry", tipo: "labial", precio: 15000, imagen: "/labial-pa.jpg" },
-          { id: 2, nombre: "Gloss Crystal Clear", tipo: "gloss", precio: 12000, imagen: "/labial-cherry.png" },
-          { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, imagen: "/labial-cerrado.jpg" },
-          { id: 4, nombre: "Berry Bomb Gloss", tipo: "gloss", precio: 13000, imagen: "/labial-pa.jpg" },
-          { id: 5, nombre: "Rose Gold Shimmer", tipo: "labial", precio: 15500, imagen: "/labial-cherry.png" }
+          { id: 2, nombre: "Gloss Crystal Clear", tipo: "gloss", precio: 12000, imagen: "/gloss-crystal-clear.jpeg" },
+          { id: 3, nombre: "Nude Chic Mate", tipo: "labial", precio: 14000, imagen:  "/nude-chic-mate.jpeg" },
+          { id: 4, nombre: "Berry Bomb Gloss", tipo: "gloss", precio: 13000, imagen: "/berry-bomb-gloss.jpeg" },
+          { id: 5, nombre: "Rose Gold Shimmer", tipo: "labial", precio: 15500, imagen: "/rose-gold-shimmer.jpeg" }
         ];
         setProductos(datos);
         setFiltrados(datos);
