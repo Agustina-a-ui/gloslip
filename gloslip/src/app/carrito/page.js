@@ -1,15 +1,59 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
 export default function CarritoPage() {
   const { carrito, eliminarDelCarrito, totalPrecio, totalItems } = useCart();
+  const router = useRouter();
+
+  const handleFinalizarCompra = async () => {
+    try {
+      // 1. Obtener usuario logueado
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert("Tenés que estar logueado para comprar");
+        router.push("/auth/login");
+        return;
+      }
+
+      // 2. Crear la orden en Supabase
+      const { data: orden, error } = await supabase
+        .from("ordenes")
+        .insert({
+          usuario_id: user.id,
+          total: totalPrecio,
+          estado: "pendiente",
+          metodo_pago: "mercadopago",
+        })
+        .select()
+        .single();
+
+      if (error || !orden) {
+        alert("Error al crear la orden");
+        console.error(error);
+        return;
+      }
+
+      // 3. Redirigir al checkout con el id de la orden
+      router.push(`/checkout?orden_id=${orden.id}`);
+
+    } catch (err) {
+      console.error(err);
+      alert("Error inesperado");
+    }
+  };
 
   return (
     <>
       <div className="noise-overlay" />
-      
-      
 
       <main style={{ paddingTop: '160px', minHeight: '100vh', maxWidth: '900px', margin: '0 auto', padding: '160px 20px 80px' }}>
         <h1 style={{ fontSize: '2.5rem', fontWeight: '300', marginBottom: '2rem', textAlign: 'center' }}>Tu Carrito</h1>
@@ -36,8 +80,8 @@ export default function CarritoPage() {
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <p style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '10px' }}>${item.precio * item.cantidad}</p>
-                    <button 
-                      onClick={() => eliminarDelCarrito(item.id)} 
+                    <button
+                      onClick={() => eliminarDelCarrito(item.id)}
                       style={{ background: 'none', border: 'none', color: '#ff4d4d', cursor: 'pointer', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}
                     >
                       Eliminar
@@ -50,9 +94,13 @@ export default function CarritoPage() {
             <div style={{ marginTop: '3rem', padding: '2rem', background: '#fcfcfc', borderRadius: '15px', border: '1px solid #eee', textAlign: 'right' }}>
               <p style={{ fontSize: '1.1rem', color: '#666' }}>Subtotal ({totalItems} productos)</p>
               <h2 style={{ fontSize: '2rem', margin: '0.5rem 0 2rem 0' }}>Total: ${totalPrecio}</h2>
-              <Link href="/checkout" className="btn btn-primary" style={{ width: '100%', maxWidth: '300px', padding: '1.2rem', textAlign: 'center' }}>
+              <button
+                onClick={handleFinalizarCompra}
+                className="btn btn-primary"
+                style={{ width: '100%', maxWidth: '300px', padding: '1.2rem', textAlign: 'center', cursor: 'pointer' }}
+              >
                 Finalizar Compra
-              </Link>
+              </button>
             </div>
           </div>
         )}
