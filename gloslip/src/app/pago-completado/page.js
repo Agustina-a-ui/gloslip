@@ -13,14 +13,22 @@ function PagoCompletadoContent() {
   const params = useSearchParams();
 
   useEffect(() => {
-    const limpiarCarrito = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from('carrito').delete().eq('usuario_id', user.id);
+  const limpiarYActualizar = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from('carrito').delete().eq('usuario_id', user.id);
+      const ordenId = params.get("external_reference");
+      if (ordenId) {
+        await supabase
+          .from('ordenes')
+          .update({ estado: 'pagada' })
+          .eq('id', ordenId)
+          .eq('usuario_id', user.id);
       }
-    };
-    limpiarCarrito();
-  }, []);
+    }
+  };
+  limpiarYActualizar();
+}, []);
 
   return (
     <>
