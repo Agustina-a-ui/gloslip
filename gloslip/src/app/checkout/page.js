@@ -49,42 +49,68 @@ function CheckoutContent() {
     }
   };
 
-  if (loading) return <p>Cargando orden...</p>;
-  if (!orden) return <p>Orden no encontrada.</p>;
+  if (loading) return (
+    <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: 'var(--text-muted)' }}>Cargando orden...</p>
+    </main>
+  );
+
+  if (!orden) return (
+    <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: 'var(--text-muted)' }}>Orden no encontrada.</p>
+    </main>
+  );
 
   return (
-    <div style={{ maxWidth: 600, margin: "40px auto", padding: "0 20px" }}>
-      <h1>Resumen de tu orden</h1>
-      <div style={{
-        borderLeft: "4px solid #3498db",
-        padding: "16px",
-        background: "#fff",
-        borderRadius: 8,
-        marginBottom: 24,
-        boxShadow: "0 2px 8px #0001"
-      }}>
-        <p><strong>Orden #:</strong> {orden.id}</p>
-        <p><strong>Estado:</strong> {orden.estado}</p>
-        <p><strong>Total:</strong> ${orden.total}</p>
-      </div>
-      <button
-        onClick={handlePagar}
-        disabled={pagando}
-        style={{
-          width: "100%",
-          padding: "14px",
-          background: pagando ? "#ccc" : "#27ae60",
-          color: "#fff",
-          border: "none",
-          borderRadius: 8,
-          fontSize: "1rem",
-          fontWeight: "bold",
-          cursor: pagando ? "not-allowed" : "pointer",
-        }}
-      >
-        {pagando ? "Redirigiendo a Mercado Pago..." : "Pagar con Mercado Pago"}
-      </button>
-    </div>
+    <>
+      <div className="noise-overlay" />
+      <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '120px 1.2rem 4rem' }}>
+        <div style={{ maxWidth: 480, width: '100%' }}>
+
+          {/* Eyebrow */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: '1.5rem' }}>
+            <div style={{ width: 32, height: 1, background: 'var(--rose)', borderRadius: 1 }} />
+            <span style={{ fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Resumen de compra</span>
+          </div>
+
+          <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem, 6vw, 2.8rem)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '2rem', color: 'var(--text)' }}>
+            Tu orden
+          </h1>
+
+          {/* Card orden */}
+          <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 16, padding: '1.5rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>N° de orden</span>
+              <span style={{ fontWeight: 600, color: 'var(--text)' }}>#{orden.id}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Estado</span>
+              <span style={{ background: '#fff8e1', color: '#f59e0b', padding: '3px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 600, textTransform: 'capitalize' }}>{orden.estado}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Total</span>
+              <span style={{ fontFamily: 'var(--serif)', fontSize: '1.6rem', fontWeight: 700, color: 'var(--rose-deep)' }}>${Number(orden.total).toLocaleString()}</span>
+            </div>
+          </div>
+
+          {/* Botón */}
+          <button
+            onClick={handlePagar}
+            disabled={pagando}
+            className="btn btn-primary"
+            style={{ width: '100%', justifyContent: 'center', opacity: pagando ? 0.6 : 1, cursor: pagando ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}
+          >
+            {pagando ? "Redirigiendo..." : "Pagar con Mercado Pago"}
+          </button>
+
+          {/* Seguridad */}
+          <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            🔒 Pago seguro procesado por Mercado Pago
+          </p>
+
+        </div>
+      </main>
+    </>
   );
 }
 
