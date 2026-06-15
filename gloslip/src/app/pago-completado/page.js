@@ -30,6 +30,7 @@ function PagoCompletadoContent() {
   limpiarYActualizar();
 }, []);
 
+
   return (
     <>
       <div className="noise-overlay" />
