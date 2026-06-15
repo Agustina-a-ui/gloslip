@@ -2,14 +2,27 @@
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useCart } from "../context/CartContext";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 function PagoCompletadoContent() {
   const params = useSearchParams();
-  const { vaciarCarrito } = useCart();
 
   useEffect(() => {
-    vaciarCarrito();
+    const limpiarCarrito = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('carrito')
+          .delete()
+          .eq('usuario_id', user.id);
+      }
+    };
+    limpiarCarrito();
   }, []);
 
   return (
