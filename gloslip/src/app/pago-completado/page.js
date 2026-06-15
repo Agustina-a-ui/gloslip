@@ -1,10 +1,16 @@
 "use client";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext"; // ajustá el path si es diferente
 
 function PagoCompletadoContent() {
   const params = useSearchParams();
+  const { vaciarCarrito } = useCart();
+
+  useEffect(() => {
+    vaciarCarrito();
+  }, []);
 
   return (
     <div style={{
