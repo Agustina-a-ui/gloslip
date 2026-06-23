@@ -8,17 +8,22 @@ const supabase = createClient(
 
 export async function POST(request) {
   try {
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ ok: true });
+    }
+
     console.log("Webhook recibido:", body);
 
     const topic = body.type || body.topic;
     const id = body.data?.id || body.id;
 
-    if (topic !== "payment") {
+    if (!topic || topic !== "payment" || !id) {
       return NextResponse.json({ ok: true });
     }
 
-    // Consultar el pago a MP
     const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${id}`, {
       headers: {
         Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
@@ -29,19 +34,17 @@ export async function POST(request) {
     console.log("Pago:", pago);
 
     const ordenId = pago.external_reference;
-    const estado = pago.status; // approved, rejected, pending
+    const estado = pago.status;
 
     if (!ordenId) {
       return NextResponse.json({ ok: true });
     }
 
-    // Mapear estado de MP a estado de tu orden
     let nuevoEstado;
     if (estado === "approved") nuevoEstado = "pagada";
     else if (estado === "rejected") nuevoEstado = "cancelada";
     else nuevoEstado = "pendiente";
 
-    // Actualizar la orden en Supabase
     await supabase
       .from("ordenes")
       .update({ estado: nuevoEstado })
