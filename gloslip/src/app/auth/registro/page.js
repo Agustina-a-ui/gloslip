@@ -38,13 +38,15 @@ export default function Registro() {
       if (error) {
         setError(error.message);
       } else {
-        await supabase.from("usuarios").insert({
-          id: data.user.id,
-          email,
-          nombre,
-          rol: "cliente"
-        });
-        router.push("/");
+        if (data.user) {
+          await supabase.from("usuarios").insert({
+            id: data.user.id,
+            email,
+            nombre,
+            rol: "cliente"
+          });
+        }
+        router.push("/auth/login?mensaje=confirma-tu-email");
       }
     } catch (err) {
       setError("Error al registrarse");

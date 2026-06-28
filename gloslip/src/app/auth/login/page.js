@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -11,6 +12,8 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const mensaje = searchParams.get("mensaje");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -40,6 +43,12 @@ export default function Login() {
           </h1>
           <p style={{ color: "#999", fontSize: "0.9rem" }}>Iniciá sesión en tu cuenta</p>
         </div>
+
+        {mensaje === "confirma-tu-email" && (
+          <div style={{ background: "#eefff5", border: "1px solid #b2f0cc", borderRadius: "10px", padding: "0.8rem 1rem", marginBottom: "1.5rem", color: "#2d7a4f", fontSize: "0.85rem" }}>
+            ¡Cuenta creada! Revisá tu email para confirmarla antes de iniciar sesión.
+          </div>
+        )}
 
         {error && (
           <div style={{ background: "#ffeef2", border: "1px solid #ffccd6", borderRadius: "10px", padding: "0.8rem 1rem", marginBottom: "1.5rem", color: "#c0446a", fontSize: "0.85rem" }}>
