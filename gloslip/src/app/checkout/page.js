@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
@@ -12,11 +13,6 @@ function CheckoutContent() {
   useEffect(() => {
     if (!orden_id) return;
     const fetchOrden = async () => {
-      const { createClient } = await import("@supabase/supabase-js");
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      );
       const { data } = await supabase
         .from("ordenes")
         .select("*")

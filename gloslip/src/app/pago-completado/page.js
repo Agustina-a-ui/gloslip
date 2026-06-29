@@ -2,33 +2,31 @@
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { supabase } from "../../lib/supabase";
 
 function PagoCompletadoContent() {
   const params = useSearchParams();
 
   useEffect(() => {
-  const limpiarYActualizar = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase.from('carrito').delete().eq('usuario_id', user.id);
-      const ordenId = params.get("external_reference");
-      if (ordenId) {
-        await supabase
-          .from('ordenes')
-          .update({ estado: 'pagada' })
-          .eq('id', ordenId)
-          .eq('usuario_id', user.id);
+    const limpiarYActualizar = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('carrito').delete().eq('usuario_id', user.id);
+        const ordenId = params.get("external_reference");
+        if (ordenId) {
+          await supabase
+            .from('ordenes')
+            .update({ estado: 'pagada' })
+            .eq('id', ordenId)
+            .eq('usuario_id', user.id);
+        }
       }
-    }
-  };
-  limpiarYActualizar();
-}, []);
+      // Limpiar sesión corrupta
+      localStorage.clear();
+      sessionStorage.clear();
+    };
+    limpiarYActualizar();
+  }, []);
 
 
   return (
