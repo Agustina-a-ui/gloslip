@@ -70,19 +70,21 @@ function TarjetaProducto({ producto }) {
             <button onClick={sumar} style={{ padding: '6px 10px', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#666' }}>+</button>
           </div>
 
-          <button onClick={() => {
-            agregarAlCarrito({ ...producto, imagen: producto.imagen_url }, cantidad);
-            alert(`¡Agregaste ${cantidad} ${producto.nombre} al carrito!`);
-            setCantidad(1);
-          }}
-            style={{
-              backgroundColor: '#c9907a', color: 'white', border: 'none',
-              padding: '8px 16px', borderRadius: '30px', cursor: 'pointer',
-              fontWeight: '600', fontSize: '0.85rem'
-            }}
-          >
-            Agregar
-          </button>
+      <button onClick={async () => {
+        const agregado = await agregarAlCarrito({ ...producto, imagen: producto.imagen_url }, cantidad);
+        if (agregado) {
+          alert(`¡Agregaste ${cantidad} ${producto.nombre} al carrito!`);
+        }
+        setCantidad(1);
+      }}
+        style={{
+          backgroundColor: '#c9907a', color: 'white', border: 'none',
+          padding: '8px 16px', borderRadius: '30px', cursor: 'pointer',
+          fontWeight: '600', fontSize: '0.85rem'
+        }}
+      >
+        Agregar
+      </button>
         </div>
       </div>
     </div>

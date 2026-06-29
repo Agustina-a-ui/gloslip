@@ -54,7 +54,7 @@ export function CartProvider({ children }) {
 
     if (cantidadTotal > producto.stock) {
       alert(`Solo hay ${producto.stock} unidades disponibles de ${producto.nombre}`);
-      return;
+      return false;
     }
 
     // Actualizar estado local
@@ -79,6 +79,7 @@ export function CartProvider({ children }) {
         cantidad: cantidadTotal
       }, { onConflict: 'usuario_id,producto_id' });
     }
+    return true;
   };
 
   const eliminarDelCarrito = async (id) => {
