@@ -1,15 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  { auth: { storageKey: 'admin-session' } }
-);
-
-const ADMIN_EMAIL = 'admin@gloslip.com';
+import { useRouter } from 'next/navigation';
+import { supabase } from '../../lib/supabase';
 
 const formVacio = {
   nombre: '',
@@ -21,12 +14,9 @@ const formVacio = {
 };
 
 export default function AdminPage() {
-  const [sesion, setSesion] = useState(null);
+  const router = useRouter();
+  const [autorizado, setAutorizado] = useState(false);
   const [verificando, setVerificando] = useState(true);
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const [loginLoading, setLoginLoading] = useState(false);
 
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,55 +27,41 @@ export default function AdminPage() {
 
   useEffect(() => {
     const verificar = async () => {
-        const { data: { session } } = await supabaseAdmin.auth.getSession();
-        if (session?.user?.email === ADMIN_EMAIL) {
-        localStorage.removeItem('sb-msppphxrjausgqaecvib-auth-token');
-        setSesion(session);
-        }
-        setVerificando(false);
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push('/auth/login');
+        return;
+      }
+
+      const { data: perfil } = await supabase
+        .from('usuarios')
+        .select('rol')
+        .eq('id', user.id)
+        .single();
+
+      if (perfil?.rol !== 'admin') {
+        router.push('/');
+        return;
+      }
+
+      setAutorizado(true);
+      setVerificando(false);
     };
     verificar();
   }, []);
 
   useEffect(() => {
-    if (sesion) fetchProductos();
-  }, [sesion]);
-
-  async function handleLogin(e) {
-    e.preventDefault();
-    setLoginError('');
-    setLoginLoading(true);
-
-    if (loginEmail !== ADMIN_EMAIL) {
-      setLoginError('No tenés permisos para acceder al panel.');
-      setLoginLoading(false);
-      return;
-    }
-
-    const { data, error } = await supabaseAdmin.auth.signInWithPassword({
-      email: loginEmail,
-      password: loginPassword,
-    });
-
-    if (error) {
-      setLoginError('Email o contraseña incorrectos');
-    } else {
-      setSesion(data.session);
-    }
-    setLoginLoading(false);
-  }
+    if (autorizado) fetchProductos();
+  }, [autorizado]);
 
   function handleLogout() {
-    supabaseAdmin.auth.signOut();
-    setSesion(null);
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.href = '/';
+    router.push('/');
   }
 
   async function fetchProductos() {
     setLoading(true);
-    const { data } = await supabaseAdmin.from('productos').select('*').order('id');
+    const { data } = await supabase.from('productos').select('*').order('id');
     setProductos(data || []);
     setLoading(false);
   }
@@ -112,7 +88,7 @@ export default function AdminPage() {
 
   async function handleEliminar(id, nombre) {
     if (!confirm('¿Seguro que querés eliminar "' + nombre + '"?')) return;
-    const { error } = await supabaseAdmin.from('productos').delete().eq('id', id);
+    const { error } = await supabase.from('productos').delete().eq('id', id);
     if (error) alert('Error al eliminar: ' + error.message);
     else fetchProductos();
   }
@@ -135,10 +111,10 @@ export default function AdminPage() {
     };
 
     if (modal === 'crear') {
-      const { error } = await supabaseAdmin.from('productos').insert([payload]);
+      const { error } = await supabase.from('productos').insert([payload]);
       if (error) { setError('Error al crear: ' + error.message); setGuardando(false); return; }
     } else {
-      const { error } = await supabaseAdmin.from('productos').update(payload).eq('id', form.id);
+      const { error } = await supabase.from('productos').update(payload).eq('id', form.id);
       if (error) { setError('Error al actualizar: ' + error.message); setGuardando(false); return; }
     }
 
@@ -150,48 +126,19 @@ export default function AdminPage() {
   if (verificando) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#94a3b8' }}>Cargando...</p>
+        <p style={{ color: '#94a3b8' }}>Verificando acceso...</p>
       </div>
     );
   }
 
-  if (!sesion) {
-    return (
-      <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fafafa' }}>
-        <div style={s.loginCard}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ fontFamily: 'Georgia, serif', fontSize: '2rem', color: '#1a1a1a', margin: 0 }}>
-              <span style={{ color: '#8b3050' }}>G</span>loslip
-            </h1>
-            <p style={{ color: '#999', fontSize: '0.9rem', marginTop: '4px' }}>Panel de administración</p>
-          </div>
-
-          {loginError && <div style={s.loginError}>{loginError}</div>}
-
-          <form onSubmit={handleLogin}>
-            <div style={{ marginBottom: '1.2rem' }}>
-              <label style={s.loginLabel}>Email</label>
-              <input type="email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} placeholder="tu@email.com" required style={s.loginInput} />
-            </div>
-            <div style={{ marginBottom: '1.8rem' }}>
-              <label style={s.loginLabel}>Contraseña</label>
-              <input type="password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} placeholder="••••••••" required style={s.loginInput} />
-            </div>
-            <button type="submit" disabled={loginLoading} style={s.loginBtn}>
-              {loginLoading ? 'Ingresando...' : 'Ingresar al panel'}
-            </button>
-          </form>
-        </div>
-      </main>
-    );
-  }
+  if (!autorizado) return null;
 
   return (
     <div style={s.page}>
       <div style={s.header}>
         <div>
           <h1 style={s.titulo}>Panel Admin</h1>
-          <p style={s.subtitulo}>Gestión de productos · {sesion.user.email}</p>
+          <p style={s.subtitulo}>Gestión de productos</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button onClick={abrirCrear} style={s.btnCrear}>+ Nuevo producto</button>
@@ -296,11 +243,6 @@ export default function AdminPage() {
 }
 
 const s = {
-  loginCard: { width: '100%', maxWidth: '420px', background: '#fff', borderRadius: '20px', padding: '2.5rem', boxShadow: '0 8px 32px rgba(0,0,0,0.06)', border: '1px solid #f0e6e2' },
-  loginLabel: { display: 'block', fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#999', marginBottom: '0.5rem' },
-  loginInput: { width: '100%', padding: '0.9rem 1rem', border: '1px solid #ebebeb', borderRadius: '10px', fontSize: '1rem', color: '#1a1a1a', outline: 'none', background: '#fafafa', boxSizing: 'border-box' },
-  loginBtn: { width: '100%', padding: '1rem', background: '#8b3050', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer' },
-  loginError: { background: '#ffeef2', border: '1px solid #ffccd6', borderRadius: '10px', padding: '0.8rem 1rem', marginBottom: '1.5rem', color: '#c0446a', fontSize: '0.85rem' },
   page: { padding: '100px 40px 40px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'system-ui, sans-serif', color: '#1e293b' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' },
   titulo: { fontSize: '28px', fontWeight: 800, margin: 0 },
