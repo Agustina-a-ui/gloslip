@@ -11,6 +11,7 @@ export default function Navbar() {
   const [isHovered, setIsHovered] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [usuario, setUsuario] = useState(null);
+  const [esAdmin, setEsAdmin] = useState(false); // ← NUEVO
 
   const router = useRouter();
   const [busqueda, setBusqueda] = useState('');
@@ -22,11 +23,21 @@ export default function Navbar() {
     const obtenerUsuario = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUsuario(user);
+      if (user) {
+        const { data } = await supabase.from('usuarios').select('rol').eq('id', user.id).single();
+        setEsAdmin(data?.rol === 'admin');
+      }
     };
     obtenerUsuario();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUsuario(session?.user ?? null);
+      if (session?.user) {
+        const { data } = await supabase.from('usuarios').select('rol').eq('id', session.user.id).single();
+        setEsAdmin(data?.rol === 'admin');
+      } else {
+        setEsAdmin(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -35,6 +46,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUsuario(null);
+    setEsAdmin(false); // ← NUEVO
     setMenuAbierto(false);
     router.push('/');
   };
@@ -82,6 +94,12 @@ export default function Navbar() {
                 <Link href="/ordenes" style={{ fontSize: '0.75rem', color: '#666', textDecoration: 'none', fontWeight: '500' }}>
                   Mis órdenes
                 </Link>
+                {/* ← NUEVO: solo si es admin */}
+                {esAdmin && (
+                  <Link href="/admin" style={{ fontSize: '0.75rem', color: '#fff', background: '#8b3050', borderRadius: '20px', padding: '4px 12px', fontWeight: '600', textDecoration: 'none' }}>
+                    ⚙️ Admin
+                  </Link>
+                )}
                 <button onClick={handleLogout} style={{ fontSize: '0.75rem', color: '#e55a8b', background: 'none', border: '1px solid #e55a8b', borderRadius: '20px', padding: '4px 12px', cursor: 'pointer', fontWeight: '500' }}>
                   Salir
                 </button>
@@ -233,6 +251,14 @@ export default function Navbar() {
                   <span className="mobile-menu-label">Mis órdenes</span>
                   <span className="mobile-menu-arrow">›</span>
                 </Link>
+                {/* ← NUEVO: solo si es admin */}
+                {esAdmin && (
+                  <Link href="/admin" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
+                    <span className="mobile-menu-icon">⚙️</span>
+                    <span className="mobile-menu-label" style={{ color: '#8b3050', fontWeight: '600' }}>Panel Admin</span>
+                    <span className="mobile-menu-arrow">›</span>
+                  </Link>
+                )}
                 <button onClick={handleLogout} className="mobile-menu-link" style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
                   <span className="mobile-menu-icon">🚪</span>
                   <span className="mobile-menu-label" style={{ color: '#e55a8b' }}>Cerrar sesión</span>
