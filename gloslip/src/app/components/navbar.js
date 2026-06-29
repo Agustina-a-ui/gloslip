@@ -73,9 +73,19 @@ export default function Navbar() {
 
           {/* NAV DESKTOP */}
           <nav className="header-nav">
-            <Link href="/#inicio">Inicio</Link>
-            <Link href="/catalogo">Catálogo</Link>
-            <Link href="/contacto">Contacto</Link>
+            {enAdmin ? (
+              <>
+                <a href="/#inicio">Inicio</a>
+                <a href="/catalogo">Catálogo</a>
+                <a href="/contacto">Contacto</a>
+              </>
+            ) : (
+              <>
+                <Link href="/#inicio">Inicio</Link>
+                <Link href="/catalogo">Catálogo</Link>
+                <Link href="/contacto">Contacto</Link>
+              </>
+            )}
           </nav>
 
           {/* DERECHA DESKTOP */}
@@ -222,26 +232,48 @@ export default function Navbar() {
           </div>
 
           <nav className="mobile-menu-nav">
-            <Link href="/#inicio" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
-              <span className="mobile-menu-icon">🏠</span>
-              <span className="mobile-menu-label">Inicio</span>
-              <span className="mobile-menu-arrow">›</span>
-            </Link>
-            <Link href="/catalogo" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
-              <span className="mobile-menu-icon">💄</span>
-              <span className="mobile-menu-label">Catálogo</span>
-              <span className="mobile-menu-arrow">›</span>
-            </Link>
-            <Link href="/carrito" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
-              <span className="mobile-menu-icon">🛒</span>
-              <span className="mobile-menu-label">Carrito</span>
-              {cantidadTotal > 0 && <span className="mobile-menu-badge">{cantidadTotal}</span>}
-            </Link>
-            <Link href="/contacto" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
-              <span className="mobile-menu-icon">✉️</span>
-              <span className="mobile-menu-label">Contacto</span>
-              <span className="mobile-menu-arrow">›</span>
-            </Link>
+            {enAdmin ? (
+              <>
+                <a href="/#inicio" className="mobile-menu-link">
+                  <span className="mobile-menu-icon">🏠</span>
+                  <span className="mobile-menu-label">Inicio</span>
+                  <span className="mobile-menu-arrow">›</span>
+                </a>
+                <a href="/catalogo" className="mobile-menu-link">
+                  <span className="mobile-menu-icon">💄</span>
+                  <span className="mobile-menu-label">Catálogo</span>
+                  <span className="mobile-menu-arrow">›</span>
+                </a>
+                <a href="/contacto" className="mobile-menu-link">
+                  <span className="mobile-menu-icon">✉️</span>
+                  <span className="mobile-menu-label">Contacto</span>
+                  <span className="mobile-menu-arrow">›</span>
+                </a>
+              </>
+            ) : (
+              <>
+                <Link href="/#inicio" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
+                  <span className="mobile-menu-icon">🏠</span>
+                  <span className="mobile-menu-label">Inicio</span>
+                  <span className="mobile-menu-arrow">›</span>
+                </Link>
+                <Link href="/catalogo" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
+                  <span className="mobile-menu-icon">💄</span>
+                  <span className="mobile-menu-label">Catálogo</span>
+                  <span className="mobile-menu-arrow">›</span>
+                </Link>
+                <Link href="/carrito" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
+                  <span className="mobile-menu-icon">🛒</span>
+                  <span className="mobile-menu-label">Carrito</span>
+                  {cantidadTotal > 0 && <span className="mobile-menu-badge">{cantidadTotal}</span>}
+                </Link>
+                <Link href="/contacto" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
+                  <span className="mobile-menu-icon">✉️</span>
+                  <span className="mobile-menu-label">Contacto</span>
+                  <span className="mobile-menu-arrow">›</span>
+                </Link>
+              </>
+            )}
 
             {usuario ? (
               <>
