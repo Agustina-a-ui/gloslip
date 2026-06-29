@@ -23,17 +23,24 @@ export default function CarritoPage() {
         return;
       }
 
-      const res = await fetch('/api/ordenes', {
-        method: 'POST',
-      });
-      const result = await res.json();
+      const { data: orden, error } = await supabase
+        .from("ordenes")
+        .insert({
+          usuario_id: user.id,
+          total: totalPrecio,
+          estado: "pendiente",
+          metodo_pago: "mercadopago",
+        })
+        .select()
+        .single();
 
-      if (!res.ok) {
-        alert(result.error || 'Error al crear la orden');
+      if (error || !orden) {
+        alert("Error al crear la orden");
+        console.error(error);
         return;
       }
 
-      router.push(`/checkout?orden_id=${result.orden.id}`);
+      router.push(`/checkout?orden_id=${orden.id}`);
 
     } catch (err) {
       console.error(err);
