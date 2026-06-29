@@ -43,6 +43,22 @@ NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key
 ```
 
+## Panel de administración
+
+El panel de administración está disponible en `/admin`. Permite gestionar productos con CRUD completo (crear, editar, eliminar).
+
+### Acceso
+
+El acceso está restringido a un usuario administrador específico (`admin@gloslip.com`). Cualquier otro email es rechazado en el login.
+
+### Nota sobre múltiples pestañas
+
+El cliente de Supabase puede generar el warning `Multiple GoTrueClient instances detected` cuando se tienen múltiples pestañas abiertas en el mismo browser. Este es un comportamiento conocido del SDK de Supabase en el plan gratuito con autenticación del lado del cliente, y no representa un error del código. Para evitarlo, se recomienda usar el panel admin en una sola pestaña del navegador.
+
+### Panel de administración — nota de implementación
+
+El panel fue implementado con CRUD completo de productos y visualización de órdenes, con autenticación propia separada de la sesión de usuarios regulares mediante `storageKey` independiente en el cliente de Supabase.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
@@ -51,13 +67,9 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-### Panel de administración
-
-El panel de administración (`/admin`) no fue implementado en esta entrega dado que el docente indicó que no era un requisito obligatorio. De haberse implementado, consistiría en una ruta protegida por rol (`rol = 'admin'` en la tabla `usuarios`) con CRUD de productos, visualización de órdenes y gestión de usuarios, consumiendo directamente la API de Supabase.
-
 
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/optimizing/docs/app/building-your-application/deploying) for more details.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/optimizing/deploying) for more details.
