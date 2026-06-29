@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 
 export default function Navbar() {
@@ -11,9 +11,11 @@ export default function Navbar() {
   const [isHovered, setIsHovered] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [usuario, setUsuario] = useState(null);
-  const [esAdmin, setEsAdmin] = useState(false); // ← NUEVO
+  const [esAdmin, setEsAdmin] = useState(false);
 
   const router = useRouter();
+  const pathname = usePathname();
+  const enAdmin = pathname === '/admin';
   const [busqueda, setBusqueda] = useState('');
 
   const cantidadTotal = carrito.reduce((acc, item) => acc + item.cantidad, 0);
@@ -46,7 +48,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUsuario(null);
-    setEsAdmin(false); // ← NUEVO
+    setEsAdmin(false);
     setMenuAbierto(false);
     router.push('/');
   };
@@ -91,18 +93,21 @@ export default function Navbar() {
             {usuario ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <span style={{ fontSize: '0.8rem', color: '#666' }}>Hola, {usuario.user_metadata?.nombre || usuario.email.split('@')[0]}</span>
-                <Link href="/ordenes" style={{ fontSize: '0.75rem', color: '#666', textDecoration: 'none', fontWeight: '500' }}>
-                  Mis órdenes
-                </Link>
-                {/* ← NUEVO: solo si es admin */}
+                {!enAdmin && (
+                  <Link href="/ordenes" style={{ fontSize: '0.75rem', color: '#666', textDecoration: 'none', fontWeight: '500' }}>
+                    Mis órdenes
+                  </Link>
+                )}
                 {esAdmin && (
                   <Link href="/admin" style={{ fontSize: '0.75rem', color: '#fff', background: '#8b3050', borderRadius: '20px', padding: '4px 12px', fontWeight: '600', textDecoration: 'none' }}>
                     ⚙️ Admin
                   </Link>
                 )}
-                <button onClick={handleLogout} style={{ fontSize: '0.75rem', color: '#e55a8b', background: 'none', border: '1px solid #e55a8b', borderRadius: '20px', padding: '4px 12px', cursor: 'pointer', fontWeight: '500' }}>
-                  Salir
-                </button>
+                {!enAdmin && (
+                  <button onClick={handleLogout} style={{ fontSize: '0.75rem', color: '#e55a8b', background: 'none', border: '1px solid #e55a8b', borderRadius: '20px', padding: '4px 12px', cursor: 'pointer', fontWeight: '500' }}>
+                    Salir
+                  </button>
+                )}
               </div>
             ) : (
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -246,12 +251,13 @@ export default function Navbar() {
                     {usuario.user_metadata?.nombre || usuario.email.split('@')[0]}
                   </span>
                 </div>
-                <Link href="/ordenes" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
-                  <span className="mobile-menu-icon">📦</span>
-                  <span className="mobile-menu-label">Mis órdenes</span>
-                  <span className="mobile-menu-arrow">›</span>
-                </Link>
-                {/* ← NUEVO: solo si es admin */}
+                {!enAdmin && (
+                  <Link href="/ordenes" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
+                    <span className="mobile-menu-icon">📦</span>
+                    <span className="mobile-menu-label">Mis órdenes</span>
+                    <span className="mobile-menu-arrow">›</span>
+                  </Link>
+                )}
                 {esAdmin && (
                   <Link href="/admin" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
                     <span className="mobile-menu-icon">⚙️</span>
@@ -259,10 +265,12 @@ export default function Navbar() {
                     <span className="mobile-menu-arrow">›</span>
                   </Link>
                 )}
-                <button onClick={handleLogout} className="mobile-menu-link" style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
-                  <span className="mobile-menu-icon">🚪</span>
-                  <span className="mobile-menu-label" style={{ color: '#e55a8b' }}>Cerrar sesión</span>
-                </button>
+                {!enAdmin && (
+                  <button onClick={handleLogout} className="mobile-menu-link" style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
+                    <span className="mobile-menu-icon">🚪</span>
+                    <span className="mobile-menu-label" style={{ color: '#e55a8b' }}>Cerrar sesión</span>
+                  </button>
+                )}
               </>
             ) : (
               <>
