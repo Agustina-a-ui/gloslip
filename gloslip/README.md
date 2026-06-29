@@ -59,6 +59,12 @@ El cliente de Supabase puede generar el warning `Multiple GoTrueClient instances
 
 El panel fue implementado con CRUD completo de productos y visualización de órdenes, con autenticación propia separada de la sesión de usuarios regulares mediante `storageKey` independiente en el cliente de Supabase.
 
+### Webhooks de Mercado Pago
+
+Los webhooks están configurados en `/api/webhooks` y el código procesa las notificaciones de pago actualizando el estado de las órdenes en Supabase automáticamente (`pendiente` → `pagada` → `cancelada`).
+
+En el ambiente de prueba de Mercado Pago, las notificaciones webhook pueden no entregarse correctamente (error 502) debido a limitaciones del sandbox. El flujo de pago completo fue verificado manualmente: el usuario es redirigido a Mercado Pago, completa el pago y es redirigido de vuelta a la aplicación.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

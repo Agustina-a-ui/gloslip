@@ -47,6 +47,16 @@ export function CartProvider({ children }) {
   };
 
   const agregarAlCarrito = async (producto, cantidadAgregada = 1) => {
+    // Verificar stock disponible
+    const itemExistente = carrito.find(item => item.id === producto.id);
+    const cantidadActual = itemExistente?.cantidad || 0;
+    const cantidadTotal = cantidadActual + cantidadAgregada;
+
+    if (cantidadTotal > producto.stock) {
+      alert(`Solo hay ${producto.stock} unidades disponibles de ${producto.nombre}`);
+      return;
+    }
+
     // Actualizar estado local
     setCarrito((prevCarrito) => {
       const productoExistente = prevCarrito.find((item) => item.id === producto.id);
@@ -63,13 +73,10 @@ export function CartProvider({ children }) {
 
     // Guardar en Supabase si está logueado
     if (usuario) {
-      const itemExistente = carrito.find(item => item.id === producto.id);
-      const nuevaCantidad = (itemExistente?.cantidad || 0) + cantidadAgregada;
-
       await supabase.from('carrito').upsert({
         usuario_id: usuario.id,
         producto_id: producto.id,
-        cantidad: nuevaCantidad
+        cantidad: cantidadTotal
       }, { onConflict: 'usuario_id,producto_id' });
     }
   };

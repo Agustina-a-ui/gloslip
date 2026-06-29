@@ -16,7 +16,6 @@ export default function CarritoPage() {
 
   const handleFinalizarCompra = async () => {
     try {
-      // 1. Obtener usuario logueado
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         alert("Tenés que estar logueado para comprar");
@@ -24,26 +23,17 @@ export default function CarritoPage() {
         return;
       }
 
-      // 2. Crear la orden en Supabase
-      const { data: orden, error } = await supabase
-        .from("ordenes")
-        .insert({
-          usuario_id: user.id,
-          total: totalPrecio,
-          estado: "pendiente",
-          metodo_pago: "mercadopago",
-        })
-        .select()
-        .single();
+      const res = await fetch('/api/ordenes', {
+        method: 'POST',
+      });
+      const result = await res.json();
 
-      if (error || !orden) {
-        alert("Error al crear la orden");
-        console.error(error);
+      if (!res.ok) {
+        alert(result.error || 'Error al crear la orden');
         return;
       }
 
-      // 3. Redirigir al checkout con el id de la orden
-      router.push(`/checkout?orden_id=${orden.id}`);
+      router.push(`/checkout?orden_id=${result.orden.id}`);
 
     } catch (err) {
       console.error(err);

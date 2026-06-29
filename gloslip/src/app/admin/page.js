@@ -37,11 +37,12 @@ export default function AdminPage() {
 
   useEffect(() => {
     const verificar = async () => {
-      const { data: { session } } = await supabaseAdmin.auth.getSession();
-      if (session?.user?.email === ADMIN_EMAIL) {
+        const { data: { session } } = await supabaseAdmin.auth.getSession();
+        if (session?.user?.email === ADMIN_EMAIL) {
+        localStorage.removeItem('sb-msppphxrjausgqaecvib-auth-token');
         setSesion(session);
-      }
-      setVerificando(false);
+        }
+        setVerificando(false);
     };
     verificar();
   }, []);
@@ -77,6 +78,8 @@ export default function AdminPage() {
   function handleLogout() {
     supabaseAdmin.auth.signOut();
     setSesion(null);
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = '/';
   }
 
