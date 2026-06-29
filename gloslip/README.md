@@ -65,6 +65,9 @@ Los webhooks están configurados en `/api/webhooks` y el código procesa las not
 
 En el ambiente de prueba de Mercado Pago, las notificaciones webhook pueden no entregarse correctamente (error 502) debido a limitaciones del sandbox. El flujo de pago completo fue verificado manualmente: el usuario es redirigido a Mercado Pago, completa el pago y es redirigido de vuelta a la aplicación.
 
+### Nota sobre múltiples pestañas
+
+La aplicación funciona correctamente en una sola pestaña. Si se tienen múltiples pestañas abiertas simultáneamente, el SDK de Supabase puede generar conflictos de sesión (error: Multiple GoTrueClient instances detected). Esto es una limitación conocida del plan gratuito de Supabase con autenticación del lado del cliente. La solución definitiva requiere autenticación server-side con cookies.
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
