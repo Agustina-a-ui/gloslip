@@ -1,7 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+// Cliente SEPARADO solo para el admin, no interfiere con la sesión global
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  { auth: { storageKey: 'admin-session' } }
+);
+
+const ADMIN_EMAIL = 'admin@gloslip.com';
 
 const formVacio = {
   nombre: '',
@@ -13,7 +22,6 @@ const formVacio = {
 };
 
 export default function AdminPage() {
-  // AUTH
   const [sesion, setSesion] = useState(null);
   const [verificando, setVerificando] = useState(true);
   const [loginEmail, setLoginEmail] = useState('');
@@ -21,7 +29,6 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
 
-  // PRODUCTOS
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
@@ -31,18 +38,13 @@ export default function AdminPage() {
 
   useEffect(() => {
     const verificar = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSesion(session);
+      const { data: { session } } = await supabaseAdmin.auth.getSession();
+      if (session?.user?.email === ADMIN_EMAIL) {
+        setSesion(session);
+      }
       setVerificando(false);
     };
     verificar();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSesion(session);
-      setVerificando(false);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -53,10 +55,18 @@ export default function AdminPage() {
     e.preventDefault();
     setLoginError('');
     setLoginLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
+
+    if (loginEmail !== ADMIN_EMAIL) {
+      setLoginError('No tenés permisos para acceder al panel.');
+      setLoginLoading(false);
+      return;
+    }
+
+    const { data, error } = await supabaseAdmin.auth.signInWithPassword({
       email: loginEmail,
       password: loginPassword,
     });
+
     if (error) {
       setLoginError('Email o contraseña incorrectos');
     } else {
@@ -65,14 +75,14 @@ export default function AdminPage() {
     setLoginLoading(false);
   }
 
-  async function handleLogout() {
-    await supabase.auth.signOut();
+  function handleLogout() {
+    supabaseAdmin.auth.signOut();
     setSesion(null);
   }
 
   async function fetchProductos() {
     setLoading(true);
-    const { data } = await supabase.from('productos').select('*').order('id');
+    const { data } = await supabaseAdmin.from('productos').select('*').order('id');
     setProductos(data || []);
     setLoading(false);
   }
@@ -99,7 +109,7 @@ export default function AdminPage() {
 
   async function handleEliminar(id, nombre) {
     if (!confirm('¿Seguro que querés eliminar "' + nombre + '"?')) return;
-    const { error } = await supabase.from('productos').delete().eq('id', id);
+    const { error } = await supabaseAdmin.from('productos').delete().eq('id', id);
     if (error) alert('Error al eliminar: ' + error.message);
     else fetchProductos();
   }
@@ -122,10 +132,10 @@ export default function AdminPage() {
     };
 
     if (modal === 'crear') {
-      const { error } = await supabase.from('productos').insert([payload]);
+      const { error } = await supabaseAdmin.from('productos').insert([payload]);
       if (error) { setError('Error al crear: ' + error.message); setGuardando(false); return; }
     } else {
-      const { error } = await supabase.from('productos').update(payload).eq('id', form.id);
+      const { error } = await supabaseAdmin.from('productos').update(payload).eq('id', form.id);
       if (error) { setError('Error al actualizar: ' + error.message); setGuardando(false); return; }
     }
 
