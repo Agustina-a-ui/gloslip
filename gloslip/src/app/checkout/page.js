@@ -5,26 +5,69 @@ import { supabase } from "../../lib/supabase";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const orden_id = searchParams.get("orden_id");
   const [orden, setOrden] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pagando, setPagando] = useState(false);
 
   useEffect(() => {
-    if (!orden_id) return;
-    const fetchOrden = async () => {
-      const { data } = await supabase
-        .from("ordenes")
-        .select("*")
-        .eq("id", orden_id)
-        .single();
-      setOrden(data);
+    if (!orden_id) {
       setLoading(false);
+      return;
+    }
+
+    let montado = true;
+
+    const fetchOrden = async () => {
+      try {
+        // 1. Validamos quién es el usuario actual
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+          if (montado) {
+            setLoading(false);
+            router.push("/"); // Si no está logueado, al inicio
+          }
+          return;
+        }
+
+        // 2. Traemos la orden PERO asegurando que pertenezca al usuario logueado
+        const { data, error } = await supabase
+          .from("ordenes")
+          .select("*")
+          .eq("id", orden_id)
+          .eq("usuario_id", user.id)
+          .single();
+
+        if (error || !data) {
+          console.error("Orden no encontrada o acceso denegado");
+          if (montado) {
+            setOrden(null);
+            setLoading(false);
+          }
+          return;
+        }
+
+        if (montado) {
+          setOrden(data);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Error en la validación del checkout:", err);
+        if (montado) setLoading(false);
+      }
     };
+
     fetchOrden();
-  }, [orden_id]);
+
+    return () => {
+      montado = false;
+    };
+  }, [orden_id, router]);
 
   const handlePagar = async () => {
+    if (pagando) return; // Doble candado por si acaso
     setPagando(true);
     try {
       const res = await fetch("/api/pagos/crear-preferencia", {
@@ -41,19 +84,20 @@ function CheckoutContent() {
       }
     } catch (err) {
       console.error(err);
+      alert("Hubo un problema de conexión al procesar el pago.");
       setPagando(false);
     }
   };
 
   if (loading) return (
     <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: 'var(--text-muted)' }}>Cargando orden...</p>
+      <p style={{ color: 'var(--text-muted)', fontWeight: "500" }}>Cargando orden... 💄</p>
     </main>
   );
 
   if (!orden) return (
     <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: 'var(--text-muted)' }}>Orden no encontrada.</p>
+      <p style={{ color: 'var(--text-muted)' }}>Orden no encontrada o no tienes acceso.</p>
     </main>
   );
 
@@ -94,7 +138,14 @@ function CheckoutContent() {
             onClick={handlePagar}
             disabled={pagando}
             className="btn btn-primary"
-            style={{ width: '100%', justifyContent: 'center', opacity: pagando ? 0.6 : 1, cursor: pagando ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}
+            style={{ 
+              width: '100%', 
+              justifyContent: 'center', 
+              opacity: pagando ? 0.5 : 1, 
+              pointerEvents: pagando ? 'none' : 'auto', 
+              cursor: pagando ? 'not-allowed' : 'pointer', 
+              fontSize: '0.85rem' 
+            }}
           >
             {pagando ? "Redirigiendo..." : "Pagar con Mercado Pago"}
           </button>
@@ -112,7 +163,7 @@ function CheckoutContent() {
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={<p>Cargando...</p>}>
+    <Suspense fallback={<main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p>Cargando...</p></main>}>
       <CheckoutContent />
     </Suspense>
   );
