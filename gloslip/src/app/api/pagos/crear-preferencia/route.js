@@ -12,6 +12,10 @@ export async function POST(request) {
   try {
     const { orden_id } = await request.json();
 
+    if (!orden_id) {
+      return NextResponse.json({ error: "Falta el ID de la orden" }, { status: 400 });
+    }
+
     // 1. Obtener la orden
     const { data: orden, error: ordenError } = await supabase
       .from("ordenes")
@@ -23,18 +27,18 @@ export async function POST(request) {
       return NextResponse.json({ error: "Orden no encontrada" }, { status: 404 });
     }
 
-    if (orden.estado !== "pendiente") {
-      return NextResponse.json({ error: "La orden no está pendiente" }, { status: 400 });
+    if (orden.estado === "pagada") {
+      return NextResponse.json({ error: "La orden ya fue pagada" }, { status: 400 });
     }
 
-    // 2. Obtener items del carrito del usuario con datos del producto
+    // 2. Como no hay tabla intermedia, leemos el carrito del usuario actual en este momento
     const { data: items, error: itemsError } = await supabase
       .from("carrito")
       .select("*, productos(*)")
       .eq("usuario_id", orden.usuario_id);
 
     if (itemsError || !items || items.length === 0) {
-      return NextResponse.json({ error: "Carrito vacío" }, { status: 400 });
+      return NextResponse.json({ error: "Carrito vacío. Si ya pagaste, ignora este mensaje." }, { status: 400 });
     }
 
     // 3. Mapear al formato de Mercado Pago
@@ -42,12 +46,15 @@ export async function POST(request) {
       id: String(item.producto_id),
       title: item.productos.nombre,
       description: item.productos.descripcion || item.productos.nombre,
-      quantity: item.cantidad,
+      quantity: Number(item.cantidad),
       unit_price: Number(item.productos.precio),
       currency_id: "ARS",
     }));
 
-    // 4. Crear la preferencia
+    // 4. Forzamos la URL sin guiones para que coincida con tu endpoint
+    const webhookUrl = "https://gloslip1.vercel.app/api/webhooks/mercadopago";
+
+    // 5. Crear la preferencia
     const preference = new Preference(client);
     const result = await preference.create({
       body: {
@@ -59,7 +66,7 @@ export async function POST(request) {
         },
         auto_return: "approved",
         external_reference: String(orden_id),
-        notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/mercado-pago`,
+        notification_url: webhookUrl,
       },
     });
 

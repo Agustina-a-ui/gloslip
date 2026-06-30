@@ -15,7 +15,7 @@ export async function POST(request) {
       return NextResponse.json({ ok: true });
     }
 
-    console.log("Webhook recibido:", body);
+    console.log("Webhook recibido de MP:", body);
 
     const topic = body.type || body.topic;
     const id = body.data?.id || body.id;
@@ -30,9 +30,12 @@ export async function POST(request) {
       },
     });
 
-    const pago = await mpRes.json();
-    console.log("Pago:", pago);
+    if (!mpRes.ok) {
+      console.error(`Error al consultar pago ${id} en MP:`, mpRes.statusText);
+      return NextResponse.json({ ok: true });
+    }
 
+    const pago = await mpRes.json();
     const ordenId = pago.external_reference;
     const estado = pago.status;
 
@@ -45,15 +48,32 @@ export async function POST(request) {
     else if (estado === "rejected") nuevoEstado = "cancelada";
     else nuevoEstado = "pendiente";
 
-    await supabase
+    // 1. Actualizamos la orden y recuperamos el usuario_id asociado
+    const { data: ordenActualizada, error: errorOrden } = await supabase
       .from("ordenes")
       .update({ estado: nuevoEstado })
-      .eq("id", ordenId);
+      .eq("id", ordenId)
+      .select("usuario_id")
+      .single();
+
+    if (errorOrden) {
+      console.error("Error al actualizar la orden:", errorOrden);
+      return NextResponse.json({ ok: true });
+    }
+
+    // 2. Si se aprobó el pago, vaciamos el carrito usando ese usuario_id
+    if (estado === "approved" && ordenActualizada?.usuario_id) {
+      console.log(`Vaciando carrito para el usuario: ${ordenActualizada.usuario_id}`);
+      await supabase
+        .from("carrito")
+        .delete()
+        .eq("usuario_id", ordenActualizada.usuario_id);
+    }
 
     return NextResponse.json({ ok: true });
 
   } catch (error) {
-    console.error("Error en webhook:", error);
+    console.error("Error crítico en el webhook:", error);
     return NextResponse.json({ ok: true }, { status: 200 });
   }
 }
