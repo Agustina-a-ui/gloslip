@@ -3,15 +3,18 @@ import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
+import { useCart } from "../context/CartContext";
 
 function PagoCompletadoContent() {
   const params = useSearchParams();
+  const { vaciarCarrito } = useCart();
 
   useEffect(() => {
     const limpiarYActualizar = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         await supabase.from('carrito').delete().eq('usuario_id', user.id);
+        await vaciarCarrito();
         const ordenId = params.get("external_reference");
         if (ordenId) {
           await supabase
