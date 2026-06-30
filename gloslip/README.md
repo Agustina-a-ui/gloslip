@@ -41,33 +41,24 @@ Crear un archivo `.env.local` en la raíz del proyecto con las siguientes variab
 ```
 NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key
+SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key
+MERCADOPAGO_ACCESS_TOKEN=tu_access_token
+NEXT_PUBLIC_APP_URL=https://tu-dominio.vercel.app
 ```
 
 ## Panel de administración
 
-El panel de administración está disponible en `/admin`. Permite gestionar productos con CRUD completo (crear, editar, eliminar).
+El panel de administración está disponible en `/admin`. Permite gestionar productos con CRUD completo (crear, editar, eliminar) y visualizar órdenes.
 
 ### Acceso
 
-El acceso está restringido a un usuario administrador específico (`admin@gloslip.com`). Cualquier otro email es rechazado en el login.
+El acceso está restringido por rol: solo usuarios con `rol = 'admin'` en la tabla `usuarios` pueden ingresar al panel. El usuario administrador configurado es `admin@gloslip.com`.
 
-### Nota sobre múltiples pestañas
 
-El cliente de Supabase puede generar el warning `Multiple GoTrueClient instances detected` cuando se tienen múltiples pestañas abiertas en el mismo browser. Este es un comportamiento conocido del SDK de Supabase en el plan gratuito con autenticación del lado del cliente, y no representa un error del código. Para evitarlo, se recomienda usar el panel admin en una sola pestaña del navegador.
+## Webhooks de Mercado Pago
 
-### Panel de administración — nota de implementación
+Los webhooks están configurados en `/api/webhooks/mercadopago` y procesan las notificaciones de pago actualizando el estado de las órdenes en Supabase automáticamente (`pendiente` → `pagada` → `cancelada`).
 
-El panel fue implementado con CRUD completo de productos y visualización de órdenes, con autenticación propia separada de la sesión de usuarios regulares mediante `storageKey` independiente en el cliente de Supabase.
-
-### Webhooks de Mercado Pago
-
-Los webhooks están configurados en `/api/webhooks` y el código procesa las notificaciones de pago actualizando el estado de las órdenes en Supabase automáticamente (`pendiente` → `pagada` → `cancelada`).
-
-En el ambiente de prueba de Mercado Pago, las notificaciones webhook pueden no entregarse correctamente (error 502) debido a limitaciones del sandbox. El flujo de pago completo fue verificado manualmente: el usuario es redirigido a Mercado Pago, completa el pago y es redirigido de vuelta a la aplicación.
-
-### Nota sobre múltiples pestañas
-
-La aplicación funciona correctamente en una sola pestaña. Si se tienen múltiples pestañas abiertas simultáneamente, el SDK de Supabase puede generar conflictos de sesión (error: Multiple GoTrueClient instances detected). Esto es una limitación conocida del plan gratuito de Supabase con autenticación del lado del cliente. La solución definitiva requiere autenticación server-side con cookies.
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
