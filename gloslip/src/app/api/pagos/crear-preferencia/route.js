@@ -52,7 +52,7 @@ export async function POST(request) {
     }));
 
     // 4. Forzamos la URL sin guiones para que coincida con tu endpoint
-    const webhookUrl = "https://gloslip1.vercel.app/api/webhooks/mercadopago";
+    const webhookUrl = "https://gloslip1.vercel.app/api/webhooks/mercado-pago";
 
     // 5. Crear la preferencia
     const preference = new Preference(client);
