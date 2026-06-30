@@ -1,5 +1,6 @@
 "use client";
-import { Suspense, useEffect } from "react";
+
+import { Suspense, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
@@ -8,27 +9,40 @@ import { useCart } from "../context/CartContext";
 function PagoCompletadoContent() {
   const params = useSearchParams();
   const { vaciarCarrito } = useCart();
+  
+  // CANDADO: Evita que el proceso corra 2 veces seguidas por culpa de StrictMode o re-renders
+  const limpiadoRef = useRef(false);
 
   useEffect(() => {
-    const limpiarYActualizar = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from('carrito').delete().eq('usuario_id', user.id);
-        await vaciarCarrito();
-        const ordenId = params.get("external_reference");
-        if (ordenId) {
-          await supabase
-            .from('ordenes')
-            .update({ estado: 'pagada' })
-            .eq('id', ordenId)
-            .eq('usuario_id', user.id);
-        }
-      }
-      
-    };
-    limpiarYActualizar();
-  }, []);
+    if (limpiadoRef.current) return;
 
+    const limpiarYActualizar = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          // 1. vaciarCarrito() ya limpia la base de datos y el estado local de forma centralizada
+          await vaciarCarrito();
+
+          const ordenId = params.get("external_reference");
+          if (ordenId) {
+            await supabase
+              .from('ordenes')
+              .update({ estado: 'pagada' })
+              .eq('id', ordenId)
+              .eq('usuario_id', user.id);
+          }
+          
+          // Activamos el candado solo si todo salió bien
+          limpiadoRef.current = true;
+        }
+      } catch (error) {
+        console.error("Error al procesar la confirmación del pago:", error);
+      }
+    };
+
+    limpiarYActualizar();
+  }, [params, vaciarCarrito]);
 
   return (
     <>
@@ -87,7 +101,7 @@ function PagoCompletadoContent() {
 
 export default function PagoCompletado() {
   return (
-    <Suspense fallback={<p>Cargando...</p>}>
+    <Suspense fallback={<p style={{ textAlign: "center", paddingTop: "5rem" }}>Cargando...</p>}>
       <PagoCompletadoContent />
     </Suspense>
   );

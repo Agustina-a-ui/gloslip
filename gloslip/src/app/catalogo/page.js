@@ -70,21 +70,21 @@ function TarjetaProducto({ producto }) {
             <button onClick={sumar} style={{ padding: '6px 10px', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#666' }}>+</button>
           </div>
 
-      <button onClick={async () => {
-        const agregado = await agregarAlCarrito({ ...producto, imagen: producto.imagen_url }, cantidad);
-        if (agregado) {
-          alert(`¡Agregaste ${cantidad} ${producto.nombre} al carrito!`);
-        }
-        setCantidad(1);
-      }}
-        style={{
-          backgroundColor: '#c9907a', color: 'white', border: 'none',
-          padding: '8px 16px', borderRadius: '30px', cursor: 'pointer',
-          fontWeight: '600', fontSize: '0.85rem'
-        }}
-      >
-        Agregar
-      </button>
+          <button onClick={async () => {
+            const agregado = await agregarAlCarrito({ ...producto, imagen: producto.imagen_url }, cantidad);
+            if (agregado) {
+              alert(`¡Agregaste ${cantidad} ${producto.nombre} al carrito!`);
+            }
+            setCantidad(1);
+          }}
+            style={{
+              backgroundColor: '#c9907a', color: 'white', border: 'none',
+              padding: '8px 16px', borderRadius: '30px', cursor: 'pointer',
+              fontWeight: '600', fontSize: '0.85rem'
+            }}
+          >
+            Agregar
+          </button>
         </div>
       </div>
     </div>
@@ -93,7 +93,7 @@ function TarjetaProducto({ producto }) {
 
 function CatalogoContenido() {
   const [productos, setProductos] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [cargando, setCargando] = useState(false); 
   const [categoria, setCategoria] = useState('todos');
   const [colorFiltro, setColorFiltro] = useState('todos');
   const [orden, setOrden] = useState('defecto');
@@ -102,16 +102,45 @@ function CatalogoContenido() {
   const query = searchParams?.get("q") || "";
 
   useEffect(() => {
+    let montado = true;
+
     const fetchProductos = async () => {
-      const { data, error } = await supabase.from('productos').select('*');
-      if (error) {
-        console.error('Error al cargar productos:', error);
-      } else {
-        setProductos(data || []);
+      try {
+        if (productos.length === 0 && montado) {
+          setCargando(true);
+        }
+        
+        const { data, error } = await supabase.from('productos').select('*');
+        
+        if (error) {
+          console.error('Error al cargar productos:', error);
+          return;
+        }
+        
+        if (montado && data) {
+          setProductos(data);
+        }
+      } catch (err) {
+        console.error('Error inesperado en catálogo:', err);
+      } finally {
+        if (montado) setCargando(false);
       }
-      setCargando(false);
     };
+
     fetchProductos();
+
+    const manejarFoco = () => {
+      if (document.visibilityState === 'visible') {
+        fetchProductos();
+      }
+    };
+
+    window.addEventListener('visibilitychange', manejarFoco);
+
+    return () => {
+      montado = false;
+      window.removeEventListener('visibilitychange', manejarFoco);
+    };
   }, []);
 
   let productosMostrados = productos.filter((prod) => {

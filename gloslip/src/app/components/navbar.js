@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "../context/CartContext";
 import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "../../lib/supabase";
@@ -22,27 +22,64 @@ export default function Navbar() {
   const subtotal = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
 
   useEffect(() => {
-    const obtenerUsuario = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUsuario(user);
-      if (user) {
-        const { data } = await supabase.from('usuarios').select('rol').eq('id', user.id).single();
-        setEsAdmin(data?.rol === 'admin');
+    let montado = true;
+    // ESCUDO DE REDUNDANCIA: Almacena el último ID verificado para no saturar la BD a cada rato
+    let ultimoUserIdChecked = null;
+
+    const verificarRol = async (user) => {
+      if (!user) {
+        if (montado) setEsAdmin(false);
+        return;
+      }
+
+      // Si ya verificamos este ID exacto, bloqueamos la consulta repetitiva
+      if (ultimoUserIdChecked === user.id) return;
+      ultimoUserIdChecked = user.id;
+
+      try {
+        const { data, error } = await supabase
+          .from('usuarios')
+          .select('rol')
+          .eq('id', user.id)
+          .maybeSingle(); // maybeSingle evita crasheos si la respuesta tarda o falla
+
+        if (montado && data) {
+          setEsAdmin(data?.rol === 'admin');
+        }
+      } catch (err) {
+        console.error("Error al verificar rol en Navbar:", err);
       }
     };
-    obtenerUsuario();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUsuario(session?.user ?? null);
-      if (session?.user) {
-        const { data } = await supabase.from('usuarios').select('rol').eq('id', session.user.id).single();
-        setEsAdmin(data?.rol === 'admin');
-      } else {
-        setEsAdmin(false);
+    // 1. Carga inicial limpia del usuario
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (montado && user) {
+        setUsuario(user);
+        verificarRol(user);
       }
     });
 
-    return () => subscription.unsubscribe();
+    // 2. Escucha de eventos de foco/pestaña ultra-protegida
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!montado) return;
+      
+      const user = session?.user ?? null;
+      
+      // GUARDIÁN DE ENTRADA: Si el ID es idéntico, retornamos 'prev' para congelar el bucle de renders
+      setUsuario((prev) => {
+        if (prev?.id === user?.id) {
+          return prev; 
+        }
+        return user;
+      });
+
+      verificarRol(user);
+    });
+
+    return () => {
+      montado = false;
+      if (subscription?.unsubscribe) subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -265,7 +302,7 @@ export default function Navbar() {
                 <Link href="/carrito" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
                   <span className="mobile-menu-icon">🛒</span>
                   <span className="mobile-menu-label">Carrito</span>
-                  {cantidadTotal > 0 && <span className="mobile-menu-badge">{cantidadTotal}</span>}
+                  <span className="mobile-menu-arrow">›</span>
                 </Link>
                 <Link href="/contacto" className="mobile-menu-link" onClick={() => setMenuAbierto(false)}>
                   <span className="mobile-menu-icon">✉️</span>

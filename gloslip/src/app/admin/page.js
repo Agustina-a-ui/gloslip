@@ -26,30 +26,44 @@ export default function AdminPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    let montado = true; // Escudo extra por si cambiás de pestaña muy rápido
+
     const verificar = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        router.push('/auth/login');
-        return;
+        if (!user) {
+          if (montado) router.push('/auth/login');
+          return;
+        }
+
+        // CAMBIO MÁGICO 1: maybeSingle() en vez de single()
+        const { data: perfil } = await supabase
+          .from('usuarios')
+          .select('rol')
+          .eq('id', user.id)
+          .maybeSingle(); 
+
+        if (perfil?.rol !== 'admin') {
+          if (montado) router.push('/');
+          return;
+        }
+
+        if (montado) setAutorizado(true);
+      } catch (err) {
+        console.error("Error verificando acceso:", err);
+      } finally {
+        // CAMBIO MÁGICO 2: Esto se ejecuta SÍ O SÍ, destrabando la pantalla
+        if (montado) setVerificando(false);
       }
-
-      const { data: perfil } = await supabase
-        .from('usuarios')
-        .select('rol')
-        .eq('id', user.id)
-        .single();
-
-      if (perfil?.rol !== 'admin') {
-        router.push('/');
-        return;
-      }
-
-      setAutorizado(true);
-      setVerificando(false);
     };
+    
     verificar();
-  }, []);
+
+    return () => {
+      montado = false;
+    };
+  }, [router]);
 
   useEffect(() => {
     if (autorizado) fetchProductos();
@@ -60,10 +74,19 @@ export default function AdminPage() {
   }
 
   async function fetchProductos() {
-    setLoading(true);
-    const { data } = await supabase.from('productos').select('*').order('id');
-    setProductos(data || []);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.from('productos').select('*').order('id');
+      
+      if (!error) {
+        setProductos(data || []);
+      }
+    } catch (err) {
+      console.error("Error cargando productos:", err);
+    } finally {
+      // Pase lo que pase, apagamos el cartel de carga
+      setLoading(false);
+    }
   }
 
   function abrirCrear() {

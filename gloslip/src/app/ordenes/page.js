@@ -2,34 +2,69 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; 
 import { supabase } from "../../lib/supabase";
 
 export default function Ordenes() {
   const [ordenes, setOrdenes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [usuario, setUsuario] = useState(null);
+  const router = useRouter(); 
 
   useEffect(() => {
-    const obtenerOrdenes = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUsuario(user);
+    let montado = true;
+
+    // Centralizamos la carga de órdenes para llamarla de forma segura
+    const cargarOrdenesDelUsuario = async (userId) => {
+      try {
+        const { data, error } = await supabase
+          .from('ordenes')
+          .select('*')
+          .eq('usuario_id', userId)
+          .order('creado_en', { ascending: false });
+
+        if (!error && montado) {
+          setOrdenes(data || []);
+        }
+      } catch (err) {
+        console.error("Error al pedir las órdenes:", err);
+      } finally {
+        if (montado) setCargando(false);
+      }
+    };
+
+    // EL GUARDiÁN TOTAL: Escuchamos el estado de autenticación real
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!montado) return;
+
+      const user = session?.user ?? null;
 
       if (!user) {
+        // Si no hay sesión activa, limpiamos todo y expulsamos de inmediato
+        setUsuario(null);
+        setOrdenes([]);
         setCargando(false);
+        router.push("/");
         return;
       }
 
-      const { data, error } = await supabase
-        .from('ordenes')
-        .select('*')
-        .eq('usuario_id', user.id)
-        .order('creado_en', { ascending: false });
+      // Evitamos re-peticiones si el usuario en memoria es exactamente el mismo
+      setUsuario((prevUser) => {
+        if (prevUser?.id !== user.id) {
+          cargarOrdenesDelUsuario(user.id);
+          return user;
+        }
+        // Si el ID es idéntico, ya cargamos las órdenes correspondientes; frenamos el loading
+        if (montado) setCargando(false);
+        return prevUser;
+      });
+    });
 
-    if (!error) setOrdenes(data || []);
-    setCargando(false);
+    return () => {
+      montado = false;
+      if (subscription?.unsubscribe) subscription.unsubscribe();
     };
-    obtenerOrdenes();
-  }, []);
+  }, [router]);
 
   const estadoColor = (estado) => {
     switch (estado) {
@@ -45,21 +80,12 @@ export default function Ordenes() {
   if (cargando) {
     return (
       <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#c9907a' }}>Cargando órdenes... 💄</p>
+        <p style={{ color: '#c9907a', fontWeight: '500' }}>Cargando órdenes... 💄</p>
       </main>
     );
   }
 
-  if (!usuario) {
-    return (
-      <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
-        <p style={{ color: '#666', fontSize: '1.1rem' }}>Tenés que iniciar sesión para ver tus órdenes</p>
-        <Link href="/auth/login" style={{ background: '#ff6b9d', color: '#fff', padding: '0.8rem 2rem', borderRadius: '30px', textDecoration: 'none', fontWeight: '500' }}>
-          Iniciar sesión
-        </Link>
-      </main>
-    );
-  }
+  if (!usuario) return null;
 
   return (
     <main style={{ maxWidth: '800px', margin: '0 auto', padding: '8rem 1.5rem 4rem' }}>
