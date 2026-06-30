@@ -21,9 +21,7 @@ function PagoCompletadoContent() {
             .eq('usuario_id', user.id);
         }
       }
-      // Limpiar sesión corrupta
-      localStorage.clear();
-      sessionStorage.clear();
+      
     };
     limpiarYActualizar();
   }, []);
